@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="10"
+    android:padding="15dp">
+
+    <TextView
+        android:id="@+id/tvDayOfMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:textSize="@dimen/text_day_of_month"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:text="12"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="5.5"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:padding="5sp">
+
+        <TextView
+            android:id="@+id/tvMonthYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_day_of_week"
+            android:text="10.2020"/>
+
+        <TextView
+            android:id="@+id/tvDayOfWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:background="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/text_day_of_week"
+            android:text="Th 2"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvRevenue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:textColor="@color/colorRevenue"
+        android:text="1.000.000₫"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/tvExpenditure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:textColor="@color/colorExpenditure"
+        android:text="-1.000.000₫"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
