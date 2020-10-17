@@ -56,7 +56,9 @@ public class DBManager extends SQLiteOpenHelper {
                 CATEGORY_ID +" integer, "+
                 ACCOUNT_ID +" integer, "+
                 REVENUE_EXPENDITURE_MONEY +" REAL, "+
-                REVENUE_EXPENDITURE_NOTE +" TEXT, FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+")," +
+                REVENUE_EXPENDITURE_NOTE +" TEXT, " +
+                REVENUE_EXPENDITURE_PERIODIC +" integer," +
+                "FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+")," +
                 "FOREIGN KEY ( "+CATEGORY_ID+") REFERENCES "+TABLE_CATEGORY+"("+CATEGORY_ID+")," +
                 "FOREIGN KEY ( "+ACCOUNT_ID+") REFERENCES "+TABLE_ACCOUNT+"("+ACCOUNT_ID+"))";
                          
@@ -90,13 +92,13 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(REVENUE_EXPENDITURE_ID,revenueExpenditureDetail.getmRevenueExpenditureID());
+//        values.put(REVENUE_EXPENDITURE_ID,revenueExpenditureDetail.getmRevenueExpenditureID());
         values.put(FORM_ID,revenueExpenditureDetail.getmFormID());
         values.put(CATEGORY_ID,revenueExpenditureDetail.getmCategoryID());
         values.put(ACCOUNT_ID,revenueExpenditureDetail.getmAccountID());
         values.put(REVENUE_EXPENDITURE_MONEY,revenueExpenditureDetail.getmMoney());
         values.put(REVENUE_EXPENDITURE_NOTE,revenueExpenditureDetail.getmNote());
-
+        values.put(REVENUE_EXPENDITURE_PERIODIC,revenueExpenditureDetail.getmPeriodic());
         db.insert(TABLE_REVENUE_EXPENDITURE_DETAIL,null,values);
         db.close();
     }

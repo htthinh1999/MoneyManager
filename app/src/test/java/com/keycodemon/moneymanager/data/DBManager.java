@@ -61,11 +61,11 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addCategory(Form form){
+    public void addCategory(Category category){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FORM_ID, form.getmFormID());
-        values.put(CATEGORY_NAME, form.getmFormName());
+        values.put(FORM_ID, category.getmFormID());
+        values.put(CATEGORY_NAME, category.getmCategoryName());
         db.insert(TABLE_CATEGORY,null, values);
         db.close();
     }
