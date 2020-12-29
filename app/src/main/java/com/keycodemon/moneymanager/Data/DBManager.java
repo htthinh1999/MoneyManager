@@ -1,4 +1,4 @@
-package com.keycodemon.moneymanager.Data;
+package com.keycodemon.moneymanager.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,10 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.keycodemon.moneymanager.Model.Account;
-import com.keycodemon.moneymanager.Model.Category;
-import com.keycodemon.moneymanager.Model.Form;
-import com.keycodemon.moneymanager.Model.RevenueExpenditureDetail;
+import com.keycodemon.moneymanager.model.Account;
+import com.keycodemon.moneymanager.model.Category;
+import com.keycodemon.moneymanager.model.Form;
+import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,8 @@ public class DBManager extends SQLiteOpenHelper {
     private  String Create_table_category = "CREATE TABLE "+TABLE_CATEGORY+" ("+
             CATEGORY_ID +" integer primary key, "+
             FORM_ID +" integer, "+
-            CATEGORY_NAME +" TEXT, FOREIGN KEY (IDHinhThuc) references HINHTHUC(IDHinhThuc)) ";
+            CATEGORY_NAME +" TEXT, " +
+            "FOREIGN KEY (IDHinhThuc) references HINHTHUC(IDHinhThuc)) ";
 
     private String Create_table_account_querry = "CREATE TABLE "+TABLE_ACCOUNT+" (" +
             ACCOUNT_ID +" integer primary key, "+
@@ -62,9 +63,9 @@ public class DBManager extends SQLiteOpenHelper {
             ACCOUNT_ID +" integer, "+
             REVENUE_EXPENDITURE_MONEY +" REAL, "+
             REVENUE_EXPENDITURE_NOTE +" TEXT, " +
-            REVENUE_EXPENDITURE_PERIODIC +" integer," +
-            "FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+")," +
-            "FOREIGN KEY ( "+CATEGORY_ID+") REFERENCES "+TABLE_CATEGORY+"("+CATEGORY_ID+")," +
+            REVENUE_EXPENDITURE_PERIODIC +" integer, " +
+            "FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+"), " +
+            "FOREIGN KEY ( "+CATEGORY_ID+") REFERENCES "+TABLE_CATEGORY+"("+CATEGORY_ID+"), " +
             "FOREIGN KEY ( "+ACCOUNT_ID+") REFERENCES "+TABLE_ACCOUNT+"("+ACCOUNT_ID+"))";
 
     public DBManager(@Nullable Context context) {

@@ -1,4 +1,4 @@
-package com.keycodemon.moneymanager.Model;
+package com.keycodemon.moneymanager.model;
 
 public class RevenueExpenditureDetail {
     private int mRevenueExpenditureID;
