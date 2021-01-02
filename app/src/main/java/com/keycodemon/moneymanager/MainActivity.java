@@ -12,13 +12,22 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    CustomExpandableListAdapter customExpandableListAdapter;
+    ExpandableListView expandableListView;
+    List<ExpandableListGroupData> expandableListGroupDataList;
+    ExpandableGetData expandableGetData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -31,7 +40,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+//    public List<ExpandableListGroupData> getData(){
+//        List<ExpandableListGroupData> expandableListGroupDataList = new ArrayList<ExpandableListGroupData>();
+//
+//        ExpandableListItemData expandableListItemData = new ExpandableListItemData("Ăn uống","Ăn sáng","Tiền mặt","-20000");
+//        List<ExpandableListItemData> expandableListItemDataList = new ArrayList<ExpandableListItemData>();
+//        expandableListItemDataList.add(expandableListItemData);
+//        expandableListItemData = new ExpandableListItemData("Ăn uống","Ăn sáng","Tiền mặt","-20000");
+//        expandableListItemDataList.add(expandableListItemData);
+//        expandableListItemData = new ExpandableListItemData("Ăn uống","Ăn sáng","Tiền mặt","-20000");
+//        expandableListItemDataList.add(expandableListItemData);
+//        ExpandableListGroupData expandableListGroupData = new ExpandableListGroupData("12","10.2020","Th2","1000000","-1000000", expandableListItemDataList);
+//        expandableListGroupDataList.add(expandableListGroupData);
+//        expandableListGroupData = new ExpandableListGroupData("12","10.2020","Th2","1000000","-1000000", expandableListItemDataList);
+//        expandableListGroupDataList.add(expandableListGroupData);
+//        return  expandableListGroupDataList;
+//    }
+    public void init(){
+        expandableListView = (ExpandableListView) findViewById(R.id.expndable_listview);
+        expandableGetData = new ExpandableGetData();
+        expandableListGroupDataList =  expandableGetData.getData();
+        customExpandableListAdapter = new CustomExpandableListAdapter(this,expandableListGroupDataList);
+        expandableListView.setAdapter(customExpandableListAdapter);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
