@@ -1,7 +1,7 @@
-package com.keycodemon.moneymanager;
+package com.keycodemon.moneymanager.viewmodel;
 
 public class ExpandableListItemData {
-    private String groupItem, item, wallet, expenditure;
+    private String groupItem, item, wallet, revenue, expenditure;
 
     public String getGroupItem() {
         return groupItem;
@@ -15,14 +15,19 @@ public class ExpandableListItemData {
         return wallet;
     }
 
+    public String getRevenue(){
+        return revenue;
+    }
+
     public String getExpenditure() {
         return expenditure;
     }
 
-    public ExpandableListItemData(String groupItem, String item, String wallet, String expenditure) {
+    public ExpandableListItemData(String groupItem, String item, String wallet, String revenue, String expenditure) {
         this.groupItem = groupItem;
         this.item = item;
         this.wallet = wallet;
+        this.revenue = revenue;
         this.expenditure = expenditure;
 
     }

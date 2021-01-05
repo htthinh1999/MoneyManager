@@ -19,13 +19,21 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.keycodemon.moneymanager.data.DBManager;
+import com.keycodemon.moneymanager.model.Account;
+import com.keycodemon.moneymanager.model.Category;
+
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ItemDetailActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
+
+    DBManager dbManager;
 
     Button btnRevenue;
     Button btnExpenditure;
@@ -38,10 +46,10 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     EditText etNote;
     TableLayout tableLayout;
 
-    String[] accounts = new String[]{"Tiền mặt", "Tài khoản ngân hàng", "Thẻ tín dụng"};
-    String[] revenueCategories = new String[]{"Trả thêm giờ", "Tiền lương", "Tiền cấp", "Tiền thưởng", "Khác"};
-    String[] expenditureCategories = new String[]{"Ăn uống", "Sức khỏe", "Giải trí", "Sinh hoạt", "Áo quần", "Làm đẹp", "Giáo dục", "Sự kiện", "Đi chợ", "Khác"};
-    String[] categories = expenditureCategories;
+    String[] accounts;
+    String[] revenueCategories;
+    String[] expenditureCategories;
+    String[] categories;
     String[] numbers = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "00 000", "0 000", "000", "0", "←"};
 
     @Override
@@ -53,8 +61,43 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void init(){
+        initData();
         initWidget();
         initInAppKeyboard();
+    }
+
+    private void initData(){
+        dbManager = new DBManager(this);
+
+        // Get account data
+        List<Account> accountList = dbManager.getAllAccount();
+        List<String> accountNames = new ArrayList<>();
+        for(Account acc: accountList){
+            accountNames.add(acc.getmAccountName());
+        }
+        accounts = new String[accountNames.size()];
+        accounts = accountNames.toArray(accounts);
+
+        // Get revenue category data
+        List<Category> revenueCategoryList = dbManager.getRevenueCategories();
+        List<String> revenueCategoryNames = new ArrayList<>();
+        for(Category category: revenueCategoryList){
+            revenueCategoryNames.add(category.getmCategoryName());
+        }
+        revenueCategories = new String[revenueCategoryNames.size()];
+        revenueCategories = revenueCategoryNames.toArray(revenueCategories);
+
+        // Get expenditure category data
+        List<Category> expenditureCategoryList = dbManager.getExpenditureCategories();
+        List<String> expenditureCategoryNames = new ArrayList<>();
+        for(Category category: expenditureCategoryList){
+            expenditureCategoryNames.add(category.getmCategoryName());
+        }
+        expenditureCategories = new String[expenditureCategoryNames.size()];
+        expenditureCategories = expenditureCategoryNames.toArray(expenditureCategories);
+
+        // First categories
+        categories = expenditureCategories;
     }
 
     private void initWidget(){
@@ -117,7 +160,8 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                etDate.setText(dayOfMonth + "-" + (monthOfYear+1) + "-" + year);
+//            etDate.setText(dayOfMonth + "-" + (monthOfYear+1) + "-" + year);
+            etDate.setText(String.format("%02d",dayOfMonth) + "-" + String.format("%02d",monthOfYear+1) + "-" + year);
             }
         };
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, Calendar.getInstance().get(Calendar.YEAR),
@@ -238,7 +282,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
 
                 break;
             case R.id.btnCancel:
-
+                finish();
                 break;
             default:
 

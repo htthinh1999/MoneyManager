@@ -1,4 +1,4 @@
-package com.keycodemon.moneymanager;
+package com.keycodemon.moneymanager.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import com.keycodemon.moneymanager.R;
+import com.keycodemon.moneymanager.viewmodel.ExpandableListGroupData;
+import com.keycodemon.moneymanager.viewmodel.ExpandableListItemData;
 
 import java.util.List;
 

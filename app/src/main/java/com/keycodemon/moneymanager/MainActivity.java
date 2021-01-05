@@ -1,9 +1,15 @@
 package com.keycodemon.moneymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.keycodemon.moneymanager.adapter.CustomExpandableListAdapter;
+import com.keycodemon.moneymanager.data.DBManager;
+import com.keycodemon.moneymanager.model.Account;
+import com.keycodemon.moneymanager.viewmodel.ExpandableGetData;
+import com.keycodemon.moneymanager.viewmodel.ExpandableListGroupData;
+import com.keycodemon.moneymanager.viewmodel.ExpandableListItemData;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,12 +19,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    DBManager dbManager;
 
     CustomExpandableListAdapter customExpandableListAdapter;
     ExpandableListView expandableListView;
@@ -38,15 +44,19 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Move to Item Detail Activity
+                Intent intent = new Intent(getApplicationContext(), ItemDetailActivity.class);
+                startActivity(intent);
             }
         });
     }
     public void init(){
+        dbManager = new DBManager(this);
+        dbManager.getAllAccount();
+
         expandableListView = (ExpandableListView) findViewById(R.id.expndable_listview);
         expandableGetData = new ExpandableGetData();
-        expandableListGroupDataList =  expandableGetData.getData();
+        expandableListGroupDataList = expandableGetData.getData();
         customExpandableListAdapter = new CustomExpandableListAdapter(this,expandableListGroupDataList);
         expandableListView.setAdapter(customExpandableListAdapter);
         expandableGetData.detailListViewItem(expandableListView,customExpandableListAdapter);

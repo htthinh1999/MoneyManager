@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -51,12 +52,12 @@ public class DBManager extends SQLiteOpenHelper {
             CATEGORY_NAME +" TEXT, " +
             "FOREIGN KEY (IDHinhThuc) references HINHTHUC(IDHinhThuc)) ";
 
-    private String Create_table_account_querry = "CREATE TABLE "+TABLE_ACCOUNT+" (" +
+    private String Create_table_account = "CREATE TABLE "+TABLE_ACCOUNT+" (" +
             ACCOUNT_ID +" integer primary key, "+
             ACCOUNT_NAME +" TEXT, "+
             ACCOUNT_BALANCE +" REAL)" ;
 
-    private String Create_table_RevenueExpenditureDetail_querry = "CREATE TABLE "+TABLE_REVENUE_EXPENDITURE_DETAIL+" ("+
+    private String Create_table_RevenueExpenditureDetail = "CREATE TABLE "+TABLE_REVENUE_EXPENDITURE_DETAIL+" ("+
             REVENUE_EXPENDITURE_ID +" integer primary key, "+
             FORM_ID +" integer, "+
             CATEGORY_ID +" integer, "+
@@ -70,19 +71,84 @@ public class DBManager extends SQLiteOpenHelper {
 
     public DBManager(@Nullable Context context) {
         super(context, DATEBASE_NAME, null, VERSION);
+
+        initData();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Create_table_form);
         db.execSQL(Create_table_category);
-        db.execSQL(Create_table_account_querry);
-        db.execSQL(Create_table_RevenueExpenditureDetail_querry);
+        db.execSQL(Create_table_account);
+        db.execSQL(Create_table_RevenueExpenditureDetail);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    // Add first data
+    public void initData(){
+        // Add account data
+        boolean exist = false;
+        List<Account> accountList = getAllAccount();
+        for(Account acc: accountList){
+            if(acc.getmAccountName().equals("Tiền mặt")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addAccount(new Account("Tiền mặt", 0));
+            addAccount(new Account("Tài khoản ngân hàng", 0));
+            addAccount(new Account("Thẻ tín dụng", 0));
+        }
+
+
+        // Add form data
+        exist = false;
+        List<Form> formList = getAllForm();
+        for(Form form: formList){
+            if(form.getmFormName().equals("")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addForm(new Form("Thu"));
+            addForm(new Form("Chi"));
+        }
+
+
+        // Add category data
+        exist = false;
+        List<Category> categoryList = getAllCategory();
+        for(Category category: categoryList){
+            if(category.getmCategoryName().equals("Trả thêm giờ")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addCategory(new Category(1, "Trả thêm giờ"));
+            addCategory(new Category(1, "Tiền lương"));
+            addCategory(new Category(1, "Tiền cấp"));
+            addCategory(new Category(1, "Tiền thưởng"));
+            addCategory(new Category(1, "Khác"));
+
+            addCategory(new Category(2, "Ăn uống"));
+            addCategory(new Category(2, "Sức khỏe"));
+            addCategory(new Category(2, "Giải trí"));
+            addCategory(new Category(2, "Sinh hoạt"));
+            addCategory(new Category(2, "Áo quần"));
+            addCategory(new Category(2, "Làm đẹp"));
+            addCategory(new Category(2, "Giáo dục"));
+            addCategory(new Category(2, "Sự kiện"));
+            addCategory(new Category(2, "Đi chợ"));
+            addCategory(new Category(2, "Khác"));
+        }
     }
 
     public void addForm(Form form){
@@ -166,6 +232,46 @@ public class DBManager extends SQLiteOpenHelper {
         }
         db.close();
         return listCategory;
+    }
+
+    public List<Category> getExpenditureCategories(){
+        List<Category> expenditureCategories = new ArrayList<>();
+        String selectQuery = "SELECT * FROM "+ TABLE_CATEGORY + " WHERE " + FORM_ID + "=2";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst())
+        {
+            do {
+                Category category = new Category();
+                category.setmCategoryID(cursor.getInt(0));
+                category.setmFormID(cursor.getInt(1));
+                category.setmCategoryName(cursor.getString(2));
+                expenditureCategories.add(category);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return expenditureCategories;
+    }
+
+    public List<Category> getRevenueCategories(){
+        List<Category> revenueCategories = new ArrayList<>();
+        String selectQuery = "SELECT * FROM "+ TABLE_CATEGORY + " WHERE " + FORM_ID + "=1";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst())
+        {
+            do {
+                Category category = new Category();
+                category.setmCategoryID(cursor.getInt(0));
+                category.setmFormID(cursor.getInt(1));
+                category.setmCategoryName(cursor.getString(2));
+                revenueCategories.add(category);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return revenueCategories;
     }
 
     public List<Account> getAllAccount(){

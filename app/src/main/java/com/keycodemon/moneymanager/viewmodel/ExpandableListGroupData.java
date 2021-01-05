@@ -1,4 +1,6 @@
-package com.keycodemon.moneymanager;
+package com.keycodemon.moneymanager.viewmodel;
+
+import com.keycodemon.moneymanager.viewmodel.ExpandableListItemData;
 
 import java.util.List;
 
