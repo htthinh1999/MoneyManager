@@ -446,14 +446,14 @@ public class DBManager extends SQLiteOpenHelper {
         return db.delete(TABLE_CATEGORY,CATEGORY_ID+"=?",new String[]{String.valueOf(id)});
     }
 
-    public int deleteAccount(Account account){
+    public int deleteAccount(int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_ACCOUNT,ACCOUNT_ID+" =?", new String[]{String.valueOf(account.getmAccountID())});
+        return db.delete(TABLE_ACCOUNT,ACCOUNT_ID+" =?", new String[]{String.valueOf(id)});
     }
 
-    public int deleteRevenueExpenditureDetail(RevenueExpenditureDetail revenueExpenditureDetail){
+    public int deleteRevenueExpenditureDetail(int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_REVENUE_EXPENDITURE_DETAIL,REVENUE_EXPENDITURE_ID+" =?", new String[]{String.valueOf(revenueExpenditureDetail.getmRevenueExpenditureID())});
+        return db.delete(TABLE_REVENUE_EXPENDITURE_DETAIL,REVENUE_EXPENDITURE_ID+" =?", new String[]{String.valueOf(id)});
     }
 
 }

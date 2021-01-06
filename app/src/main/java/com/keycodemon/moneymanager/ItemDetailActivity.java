@@ -42,6 +42,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     Button btnRevenue;
     Button btnExpenditure;
     Button btnSave;
+    Button btnDelete;
     Button btnCancel;
     EditText etDate;
     EditText etAccount;
@@ -119,6 +120,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         btnRevenue = findViewById(R.id.btnRevenue);
         btnExpenditure = findViewById(R.id.btnExpenditure);
         btnSave = findViewById(R.id.btnSave);
+        btnDelete = findViewById(R.id.btnDelete);
         btnCancel = findViewById(R.id.btnCancel);
         etDate = findViewById(R.id.etDate);
         etAccount = findViewById(R.id.etAccount);
@@ -135,6 +137,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         btnRevenue.setOnClickListener(this);
         btnExpenditure.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+        btnDelete.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
         etDate.setOnTouchListener(this);
         etAccount.setOnTouchListener(this);
@@ -155,6 +158,8 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             etCategory.setText(getIntent().getStringExtra("category"));
             etMoney.setText(separatorNumber(getIntent().getLongExtra("money", 0)));
             etNote.setText(getIntent().getStringExtra("note"));
+
+            btnDelete.setVisibility(View.VISIBLE);
         }
     }
 
@@ -308,6 +313,11 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    private void deleteData(){
+        int id = getIntent().getIntExtra("id", 0);
+        dbManager.deleteRevenueExpenditureDetail(id);
+    }
+
     @Override
     public void onClick(View view) {
         String buttonText = ((Button) view).getText().toString();
@@ -328,6 +338,11 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btnSave:
                 saveData();
+                setResult(RESULT_OK);
+                finish();
+                break;
+            case R.id.btnDelete:
+                deleteData();
                 setResult(RESULT_OK);
                 finish();
                 break;
