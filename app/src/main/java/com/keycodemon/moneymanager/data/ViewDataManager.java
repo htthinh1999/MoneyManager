@@ -15,6 +15,7 @@ import com.keycodemon.moneymanager.viewmodel.ItemDetailData;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -140,6 +141,9 @@ public class ViewDataManager extends DBManager{
 
         cursor.close();
         db.close();
+
+        // Sort Day Data List
+        Collections.sort(dayDataList);
 
         return dayDataList;
     }

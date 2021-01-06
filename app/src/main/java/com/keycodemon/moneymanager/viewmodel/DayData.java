@@ -1,8 +1,9 @@
 package com.keycodemon.moneymanager.viewmodel;
 
+import java.sql.Date;
 import java.util.List;
 
-public class DayData {
+public class DayData implements Comparable<DayData>{
     private String dayOfMonth, monthYear, dayofWeek, date;
     private Long revenue, expenditure;
     private List<ItemDetailData> itemDetailDataList;
@@ -77,5 +78,27 @@ public class DayData {
 
     public int itemCount(){
         return itemDetailDataList.size();
+    }
+
+    @Override
+    public int compareTo(DayData dayData) {
+
+        int day = Integer.valueOf(date.substring(0, 2));
+        int month = Integer.valueOf(date.substring(3, 5));
+        int year = Integer.valueOf(date.substring(6, 10));
+
+        Date dateFormat = new Date(year, month, day);
+
+        day = Integer.valueOf(dayData.getDate().substring(0, 2));
+        month = Integer.valueOf(dayData.getDate().substring(3, 5));
+        year = Integer.valueOf(dayData.getDate().substring(6, 10));
+        Date dayDataFormat = new Date(year, month, day);
+
+        if(dateFormat.after(dayDataFormat)){
+            return -1;
+        }else if(dateFormat.before(dayDataFormat)){
+            return 1;
+        }
+        return 0;
     }
 }
