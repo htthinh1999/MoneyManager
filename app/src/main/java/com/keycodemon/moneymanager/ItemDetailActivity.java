@@ -141,6 +141,21 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         etCategory.setOnTouchListener(this);
         etMoney.setOnTouchListener(this);
         etNote.setOnTouchListener(this);
+
+        if(getIntent().hasExtra("formID")){
+
+            if(getIntent().getIntExtra("formID", 2) == 1){
+                changeButtonsColor("THU");
+                categories = revenueCategories;
+                formID = 1;
+            }
+
+            etDate.setText(getIntent().getStringExtra("date"));
+            etAccount.setText(getIntent().getStringExtra("account"));
+            etCategory.setText(getIntent().getStringExtra("category"));
+            etMoney.setText(separatorNumber(getIntent().getLongExtra("money", 0)));
+            etNote.setText(getIntent().getStringExtra("note"));
+        }
     }
 
     private void changeButtonsColor(String buttonName){
@@ -276,14 +291,21 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void saveData(){
+
         String date = etDate.getText().toString();
         String category = etCategory.getText().toString();
         String account = etAccount.getText().toString();
         float money = Integer.valueOf(etMoney.getText().toString().replace(" ", ""));
         String note = etNote.getText().toString();
 
-        RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
-        dbManager.addRevenueExpenditureDetail(revenueExpenditureDetail);
+        if(getIntent().getIntExtra("id", 0) == 0){
+            RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
+            dbManager.addRevenueExpenditureDetail(revenueExpenditureDetail);
+        }else{
+            int id = getIntent().getIntExtra("id", 0);
+            RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(id, formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
+            dbManager.updateRevenueExpenditureDetail(revenueExpenditureDetail);
+        }
     }
 
     @Override
