@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -305,9 +306,11 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btnSave:
                 saveData();
+                setResult(RESULT_OK);
                 finish();
                 break;
             case R.id.btnCancel:
+                setResult(RESULT_OK);
                 finish();
                 break;
             default:

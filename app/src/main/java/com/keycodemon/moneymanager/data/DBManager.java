@@ -73,7 +73,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     public DBManager(@Nullable Context context) {
         super(context, DATEBASE_NAME, null, VERSION);
-
+        this.context = context;
         initData();
     }
 
@@ -302,9 +302,9 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     public List<RevenueExpenditureDetail> getAllRevenueExpenditureDetail(){
-        List<RevenueExpenditureDetail> revenueExpenditureDetailList = new ArrayList<RevenueExpenditureDetail>();
+        List<RevenueExpenditureDetail> revenueExpenditureDetailList = new ArrayList<>();
 
-        String query = "SELECT * FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL;
+        String query = "SELECT * FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
