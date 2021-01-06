@@ -38,6 +38,7 @@ public class DBManager extends SQLiteOpenHelper {
     private static final String REVENUE_EXPENDITURE_MONEY = "SoTien";
     private static final String REVENUE_EXPENDITURE_NOTE = "GhiChu";
     private static final String REVENUE_EXPENDITURE_PERIODIC = "DinhKy";
+    private static final String REVENUE_EXPENDITURE_DATE = "Ngay";
 
     private Context context;
     private static int VERSION = 1;
@@ -65,6 +66,7 @@ public class DBManager extends SQLiteOpenHelper {
             REVENUE_EXPENDITURE_MONEY +" REAL, "+
             REVENUE_EXPENDITURE_NOTE +" TEXT, " +
             REVENUE_EXPENDITURE_PERIODIC +" integer, " +
+            REVENUE_EXPENDITURE_DATE +" DATE, " +
             "FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+"), " +
             "FOREIGN KEY ( "+CATEGORY_ID+") REFERENCES "+TABLE_CATEGORY+"("+CATEGORY_ID+"), " +
             "FOREIGN KEY ( "+ACCOUNT_ID+") REFERENCES "+TABLE_ACCOUNT+"("+ACCOUNT_ID+"))";
@@ -111,7 +113,7 @@ public class DBManager extends SQLiteOpenHelper {
         exist = false;
         List<Form> formList = getAllForm();
         for(Form form: formList){
-            if(form.getmFormName().equals("")){
+            if(form.getmFormName().equals("Thu")){
                 exist = true;
                 break;
             }
@@ -191,6 +193,7 @@ public class DBManager extends SQLiteOpenHelper {
         values.put(REVENUE_EXPENDITURE_MONEY,revenueExpenditureDetail.getmMoney());
         values.put(REVENUE_EXPENDITURE_NOTE,revenueExpenditureDetail.getmNote());
         values.put(REVENUE_EXPENDITURE_PERIODIC,revenueExpenditureDetail.getmPeriodic());
+        values.put(REVENUE_EXPENDITURE_DATE,revenueExpenditureDetail.getmDate());
         db.insert(TABLE_REVENUE_EXPENDITURE_DETAIL,null,values);
         db.close();
     }
@@ -317,6 +320,7 @@ public class DBManager extends SQLiteOpenHelper {
                 revenueExpenditureDetail.setmMoney(cursor.getFloat(4));
                 revenueExpenditureDetail.setmNote(cursor.getString(5));
                 revenueExpenditureDetail.setmPeriodic(cursor.getInt(6));
+                revenueExpenditureDetail.setmDate(cursor.getString(7));
 
                 revenueExpenditureDetailList.add(revenueExpenditureDetail);
 
@@ -385,7 +389,8 @@ public class DBManager extends SQLiteOpenHelper {
                 cursor.getInt(3),
                 cursor.getFloat(4),
                 cursor.getString(5),
-                cursor.getInt(6)
+                cursor.getInt(6),
+                cursor.getString(7)
         );
         cursor.close();
         db.close();
@@ -426,6 +431,7 @@ public class DBManager extends SQLiteOpenHelper {
         values.put(REVENUE_EXPENDITURE_MONEY, revenueExpenditureDetail.getmMoney());
         values.put(REVENUE_EXPENDITURE_NOTE, revenueExpenditureDetail.getmNote());
         values.put(REVENUE_EXPENDITURE_PERIODIC, revenueExpenditureDetail.getmPeriodic());
+        values.put(REVENUE_EXPENDITURE_DATE, revenueExpenditureDetail.getmDate());
 
         return db.update(TABLE_REVENUE_EXPENDITURE_DETAIL,values, REVENUE_EXPENDITURE_ID + " =?", new String[]{String.valueOf(revenueExpenditureDetail.getmRevenueExpenditureID())});
     }
