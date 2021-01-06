@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
     List<DayData> dayDataList;
     ExpandableGetData expandableGetData;
 
-    List<RevenueExpenditureDetail> revenueExpenditureDetailList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         dayDataList = expandableGetData.getData();
         customExpandableListAdapter = new CustomExpandableListAdapter(this, dayDataList);
         expandableListView.setAdapter(customExpandableListAdapter);
-        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter);
+        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter, this);
 
     }
 
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         dayDataList = expandableGetData.getData();
         customExpandableListAdapter = new CustomExpandableListAdapter(this, dayDataList);
         expandableListView.setAdapter(customExpandableListAdapter);
-        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter);
+        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter, this);
     }
 
     @Override

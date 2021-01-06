@@ -1,6 +1,7 @@
 package com.keycodemon.moneymanager.viewmodel;
 
 public class ItemDetailData {
+    private int id;
     private String category, note, account;
     private Long money;
     private int formID;
@@ -8,12 +9,21 @@ public class ItemDetailData {
     public ItemDetailData() {
     }
 
-    public ItemDetailData(String category, String note, String account, Long money, int formID) {
+    public ItemDetailData(int id, String category, String note, String account, Long money, int formID) {
+        this.id = id;
         this.category = category;
         this.note = note;
         this.money = money;
         this.account = account;
         this.formID = formID;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public void setID(int id) {
+        this.id = id;
     }
 
     public String getCategory() {

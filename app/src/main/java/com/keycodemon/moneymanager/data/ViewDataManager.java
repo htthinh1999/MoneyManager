@@ -167,7 +167,7 @@ public class ViewDataManager extends DBManager{
     public List<ItemDetailData> getItemDetailDateListByDate(String date){
         List<ItemDetailData> itemDetailDataList = new ArrayList<>();
 
-        String query = "SELECT " + CATEGORY_NAME + ", " + REVENUE_EXPENDITURE_NOTE + ", " + ACCOUNT_NAME + ", "+ REVENUE_EXPENDITURE_MONEY + ", re." + FORM_ID +
+        String query = "SELECT " + REVENUE_EXPENDITURE_ID + ", "+ CATEGORY_NAME + ", " + REVENUE_EXPENDITURE_NOTE + ", " + ACCOUNT_NAME + ", "+ REVENUE_EXPENDITURE_MONEY + ", re." + FORM_ID +
                 " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " re INNER JOIN " + TABLE_CATEGORY + " c ON re." + CATEGORY_ID + "=c." + CATEGORY_ID +
                 " INNER JOIN " + TABLE_ACCOUNT + " a ON re." + ACCOUNT_ID + "=a." + ACCOUNT_ID +
                 " WHERE " + REVENUE_EXPENDITURE_DATE + " = '" + date + "'";
@@ -180,11 +180,12 @@ public class ViewDataManager extends DBManager{
             do{
                 ItemDetailData itemDetailData = new ItemDetailData();
 
-                itemDetailData.setCategory(cursor.getString(0));
-                itemDetailData.setNote(cursor.getString(1));
-                itemDetailData.setAccount(cursor.getString(2));
-                itemDetailData.setMoney(cursor.getLong(3));
-                itemDetailData.setFormID(cursor.getInt(4));
+                itemDetailData.setID(cursor.getInt(0));
+                itemDetailData.setCategory(cursor.getString(1));
+                itemDetailData.setNote(cursor.getString(2));
+                itemDetailData.setAccount(cursor.getString(3));
+                itemDetailData.setMoney(cursor.getLong(4));
+                itemDetailData.setFormID(cursor.getInt(5));
 
                 itemDetailDataList.add(itemDetailData);
 
