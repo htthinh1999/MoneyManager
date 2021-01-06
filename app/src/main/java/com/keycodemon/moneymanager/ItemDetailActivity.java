@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.keycodemon.moneymanager.data.DBManager;
 import com.keycodemon.moneymanager.model.Account;
 import com.keycodemon.moneymanager.model.Category;
+import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
@@ -29,7 +30,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemDetailActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
 
@@ -51,6 +54,10 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     String[] expenditureCategories;
     String[] categories;
     String[] numbers = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "00 000", "0 000", "000", "0", "←"};
+
+    int formID = 2;
+    Map<String, Integer> accountID = new HashMap<>();
+    Map<String, Integer> categoryID = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         List<String> accountNames = new ArrayList<>();
         for(Account acc: accountList){
             accountNames.add(acc.getmAccountName());
+            accountID.put(acc.getmAccountName(), acc.getmAccountID());
         }
         accounts = new String[accountNames.size()];
         accounts = accountNames.toArray(accounts);
@@ -95,6 +103,12 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         }
         expenditureCategories = new String[expenditureCategoryNames.size()];
         expenditureCategories = expenditureCategoryNames.toArray(expenditureCategories);
+
+        // Get all category data
+        List<Category> categoryList = dbManager.getAllCategory();
+        for(Category category: categoryList){
+            categoryID.put(category.getmCategoryName(), category.getmCategoryID());
+        }
 
         // First categories
         categories = expenditureCategories;
@@ -258,8 +272,17 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         }catch (Exception ex){
             Toast.makeText(this, "Số bạn nhập quá lớn", Toast.LENGTH_LONG).show();
         }
+    }
 
+    private void saveData(){
+        String date = etDate.getText().toString();
+        String category = etCategory.getText().toString();
+        String account = etAccount.getText().toString();
+        float money = Integer.valueOf(etMoney.getText().toString().replace(" ", ""));
+        String note = etNote.getText().toString();
 
+        RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
+        dbManager.addRevenueExpenditureDetail(revenueExpenditureDetail);
     }
 
     @Override
@@ -271,15 +294,18 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                 categories = revenueCategories;
                 etCategory.setText("");
                 etCategory.requestFocus();
+                formID = 1;
                 break;
             case R.id.btnExpenditure:
                 changeButtonsColor(buttonText);
                 categories = expenditureCategories;
                 etCategory.setText("");
                 etCategory.requestFocus();
+                formID = 2;
                 break;
             case R.id.btnSave:
-
+                saveData();
+                finish();
                 break;
             case R.id.btnCancel:
                 finish();
