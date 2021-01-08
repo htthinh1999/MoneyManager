@@ -164,8 +164,9 @@ public class ViewDataManager extends DBManager{
                 return "Thứ 7";
             case "Sunday":
                 return "Chủ Nhật";
+            default:
+                return day;
         }
-        return "";
     }
 
     public List<ItemDetailData> getItemDetailDateListByDate(String date){

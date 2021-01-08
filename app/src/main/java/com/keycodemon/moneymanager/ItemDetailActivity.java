@@ -48,7 +48,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     EditText etAccount;
     EditText etCategory;
     EditText etMoney;
-    EditText etNote;
+    EditText etTitle;
     TableLayout tableLayout;
 
     String[] accounts;
@@ -117,6 +117,11 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initWidget(){
+        // Hide action bar
+        if(getSupportActionBar().isShowing()){
+            getSupportActionBar().hide();
+        }
+
         btnRevenue = findViewById(R.id.btnRevenue);
         btnExpenditure = findViewById(R.id.btnExpenditure);
         btnSave = findViewById(R.id.btnSave);
@@ -126,7 +131,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         etAccount = findViewById(R.id.etAccount);
         etCategory = findViewById(R.id.etCategory);
         etMoney = findViewById(R.id.etMoney);
-        etNote = findViewById(R.id.etNote);
+        etTitle = findViewById(R.id.etTitle);
         tableLayout = findViewById(R.id.tableLayout);
 
         etDate.setInputType(InputType.TYPE_NULL);
@@ -143,8 +148,12 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         etAccount.setOnTouchListener(this);
         etCategory.setOnTouchListener(this);
         etMoney.setOnTouchListener(this);
-        etNote.setOnTouchListener(this);
+        etTitle.setOnTouchListener(this);
 
+        // Set current date
+        etDate.setText(getCurrentDate());
+
+        // Show data to view when item was clicked
         if(getIntent().hasExtra("formID")){
 
             if(getIntent().getIntExtra("formID", 2) == 1){
@@ -157,7 +166,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             etAccount.setText(getIntent().getStringExtra("account"));
             etCategory.setText(getIntent().getStringExtra("category"));
             etMoney.setText(separatorNumber(getIntent().getLongExtra("money", 0)));
-            etNote.setText(getIntent().getStringExtra("note"));
+            etTitle.setText(getIntent().getStringExtra("note"));
 
             btnDelete.setVisibility(View.VISIBLE);
         }
@@ -175,7 +184,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             DrawableCompat.setTint(etAccount.getBackground(), colorPos);
             DrawableCompat.setTint(etCategory.getBackground(), colorPos);
             DrawableCompat.setTint(etMoney.getBackground(), colorPos);
-            DrawableCompat.setTint(etNote.getBackground(), colorPos);
+            DrawableCompat.setTint(etTitle.getBackground(), colorPos);
         }else{
             int colorPos = ContextCompat.getColor(this, R.color.colorExpenditure);
             btnExpenditure.setTextColor(colorPos);
@@ -187,8 +196,15 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             DrawableCompat.setTint(etAccount.getBackground(), colorPos);
             DrawableCompat.setTint(etCategory.getBackground(), colorPos);
             DrawableCompat.setTint(etMoney.getBackground(), colorPos);
-            DrawableCompat.setTint(etNote.getBackground(), colorPos);
+            DrawableCompat.setTint(etTitle.getBackground(), colorPos);
         }
+    }
+
+    private String getCurrentDate(){
+        int dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        return String.format("%02d",dayOfMonth) + "-" + String.format("%02d",month+1) + "-" + year;
     }
 
     private void showDatePicker(){
@@ -200,7 +216,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             }
         };
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, Calendar.getInstance().get(Calendar.YEAR),
-                                    Calendar.getInstance().get(Calendar.MONTH) + 1, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                                    Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -300,8 +316,8 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         String date = etDate.getText().toString();
         String category = etCategory.getText().toString();
         String account = etAccount.getText().toString();
-        float money = Integer.valueOf(etMoney.getText().toString().replace(" ", ""));
-        String note = etNote.getText().toString();
+        float money = Float.valueOf(etMoney.getText().toString().replace(" ", ""));
+        String note = etTitle.getText().toString();
 
         if(getIntent().getIntExtra("id", 0) == 0){
             RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
@@ -316,6 +332,15 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     private void deleteData(){
         int id = getIntent().getIntExtra("id", 0);
         dbManager.deleteRevenueExpenditureDetail(id);
+    }
+
+    private boolean validInput(){
+        if(String.valueOf(etDate.getText()).isEmpty() || String.valueOf(etAccount.getText()).isEmpty() ||
+                String.valueOf(etMoney.getText()).isEmpty() || String.valueOf(etMoney.getText()).equals("0") ||
+                String.valueOf(etCategory.getText()).isEmpty() || String.valueOf(etTitle.getText()).isEmpty()){
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -337,9 +362,13 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                 formID = 2;
                 break;
             case R.id.btnSave:
-                saveData();
-                setResult(RESULT_OK);
-                finish();
+                if(validInput()){
+                    saveData();
+                    setResult(RESULT_OK);
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Bạn cần phải nhập đầy đủ thông tin!", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btnDelete:
                 deleteData();
@@ -388,7 +417,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                     setUpKeyboard(numbers);
                     hideSoftKeyboard();
                     break;
-                case R.id.etNote:
+                case R.id.etTitle:
                     setUpKeyboard(new String[]{});
                     break;
             }
