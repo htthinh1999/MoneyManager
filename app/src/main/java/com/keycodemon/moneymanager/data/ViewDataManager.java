@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.github.mikephil.charting.data.BarEntry;
 import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 import com.keycodemon.moneymanager.viewmodel.ItemDetailData;
@@ -55,6 +56,87 @@ public class ViewDataManager extends DBManager{
     private void init(){
         this.context = context;
         dayAddedPosition = new HashMap<>();
+    }
+
+    public Long GetEvenuebyMonth(int month) {
+        Long revenueMoney = 0l;
+        String revenueQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
+                " WHERE " + FORM_ID + " = 1" +
+                " GROUP BY " + REVENUE_EXPENDITURE_DATE +
+                " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(revenueQuery, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int revenuemonth = Integer.valueOf(date.substring(3, 5));
+                if(revenuemonth == month){
+                    revenueMoney += cursor.getLong(1);
+                }
+            }while (cursor.moveToFirst());
+        }
+        Log.d("tt",revenueMoney.toString());
+        cursor.close();
+        db.close();
+
+        return revenueMoney;
+    }
+
+    public ArrayList<BarEntry> GetEvenueBarEntry(){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        BarEntry barEntry =new BarEntry(1, GetEvenuebyMonth(1));
+        barEntries.add(barEntry);
+        barEntries.add(new BarEntry(2, GetEvenuebyMonth(2)));
+        barEntries.add(new BarEntry(3, GetEvenuebyMonth(3)));
+        barEntries.add(new BarEntry(4, GetEvenuebyMonth(4)));
+        barEntries.add(new BarEntry(5, GetEvenuebyMonth(5)));
+        barEntries.add(new BarEntry(6, GetEvenuebyMonth(6)));
+        barEntries.add(new BarEntry(7, GetEvenuebyMonth(7)));
+        barEntries.add(new BarEntry(8, GetEvenuebyMonth(8)));
+        barEntries.add(new BarEntry(9, GetEvenuebyMonth(9)));
+        barEntries.add(new BarEntry(10, GetEvenuebyMonth(10)));
+        barEntries.add(new BarEntry(11, GetEvenuebyMonth(11)));
+        barEntries.add(new BarEntry(12, GetEvenuebyMonth(12)));
+        return  barEntries;
+    }
+
+    public Long GetExpenditurebyMonth(int month) {
+        Long expenditureMoney = 0l;
+        String revenueQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
+                " WHERE " + FORM_ID + " = 2" +
+                " GROUP BY " + REVENUE_EXPENDITURE_DATE +
+                " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(revenueQuery, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int revenuemonth = Integer.valueOf(date.substring(3, 5));
+                if(revenuemonth == month){
+                    expenditureMoney += cursor.getLong(1);
+                }
+            }while (cursor.moveToFirst());
+        }
+        return expenditureMoney;
+    }
+
+    public ArrayList<BarEntry>  GetExpenditureBarEntry(){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(1, GetExpenditurebyMonth(1)));
+        barEntries.add(new BarEntry(2, GetExpenditurebyMonth(2)));
+        barEntries.add(new BarEntry(3, GetExpenditurebyMonth(3)));
+        barEntries.add(new BarEntry(4, GetExpenditurebyMonth(4)));
+        barEntries.add(new BarEntry(5, GetExpenditurebyMonth(5)));
+        barEntries.add(new BarEntry(6, GetExpenditurebyMonth(6)));
+        barEntries.add(new BarEntry(7, GetExpenditurebyMonth(7)));
+        barEntries.add(new BarEntry(8, GetExpenditurebyMonth(8)));
+        barEntries.add(new BarEntry(9, GetExpenditurebyMonth(9)));
+        barEntries.add(new BarEntry(10, GetExpenditurebyMonth(10)));
+        barEntries.add(new BarEntry(11, GetExpenditurebyMonth(11)));
+        barEntries.add(new BarEntry(12, GetExpenditurebyMonth(12)));
+        return  barEntries;
     }
 
     public List<DayData> getAllDayData(){
@@ -200,6 +282,8 @@ public class ViewDataManager extends DBManager{
         db.close();
 
         return itemDetailDataList;
+
+
     }
 
 }
