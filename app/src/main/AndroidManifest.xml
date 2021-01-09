@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".viewmodel.CategoryActivity"></activity>
+        <activity android:name=".CategoryActivity"></activity>
         <activity android:name=".Account_Activitiy" />
         <activity android:name=".SavingDepositActivity" />
         <activity android:name=".ItemDetailActivity" />

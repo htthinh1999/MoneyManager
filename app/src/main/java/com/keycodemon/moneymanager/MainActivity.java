@@ -6,24 +6,18 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.keycodemon.moneymanager.adapter.CustomExpandableListAdapter;
-import com.keycodemon.moneymanager.data.DBManager;
-import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 import com.keycodemon.moneymanager.data.ExpandableGetData;
-import com.keycodemon.moneymanager.viewmodel.CategoryActivity;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.os.Debug;
-import android.util.Log;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -94,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         expandableListView.setAdapter(customExpandableListAdapter);
         expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter, this);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

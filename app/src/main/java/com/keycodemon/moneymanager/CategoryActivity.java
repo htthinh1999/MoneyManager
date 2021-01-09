@@ -1,4 +1,4 @@
-package com.keycodemon.moneymanager.viewmodel;
+package com.keycodemon.moneymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -18,10 +18,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
-import com.keycodemon.moneymanager.Account_Activitiy;
-import com.keycodemon.moneymanager.R;
 import com.keycodemon.moneymanager.data.DBManager;
-import com.keycodemon.moneymanager.model.Account;
 import com.keycodemon.moneymanager.model.Category;
 
 import java.util.ArrayList;

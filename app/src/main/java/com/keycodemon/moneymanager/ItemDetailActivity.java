@@ -13,6 +13,8 @@ import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -48,13 +50,14 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     EditText etAccount;
     EditText etCategory;
     EditText etMoney;
-    EditText etTitle;
+    AutoCompleteTextView etTitle;
     TableLayout tableLayout;
 
     String[] accounts;
     String[] revenueCategories;
     String[] expenditureCategories;
     String[] categories;
+    String[] notes;
     String[] numbers = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "00 000", "0 000", "000", "0", "←"};
 
     int formID = 2;
@@ -70,8 +73,8 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void init(){
-        initData();
         initWidget();
+        initData();
         initInAppKeyboard();
     }
 
@@ -112,8 +115,19 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             categoryID.put(category.getmCategoryName(), category.getmCategoryID());
         }
 
+        // Get all notes
+        List<RevenueExpenditureDetail> revenueExpenditureDetailList = dbManager.getAllRevenueExpenditureDetail();
+        List<String> RevenueExpenditureDetailNotes = new ArrayList<>();
+        for(RevenueExpenditureDetail revenueExpenditureDetail: revenueExpenditureDetailList ){
+            RevenueExpenditureDetailNotes.add(revenueExpenditureDetail.getmNote());
+        }
+        notes = new String[RevenueExpenditureDetailNotes.size()];
+        notes = RevenueExpenditureDetailNotes.toArray(notes);
+
         // First categories
         categories = expenditureCategories;
+
+        setNoteAutoTextView();
     }
 
     private void initWidget(){
@@ -341,6 +355,12 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             return false;
         }
         return true;
+    }
+
+    private void setNoteAutoTextView()
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, notes);
+        etTitle.setAdapter(adapter);
     }
 
     @Override

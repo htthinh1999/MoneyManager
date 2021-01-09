@@ -152,13 +152,15 @@
             android:layout_weight="6"
             android:text="Tên"/>
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorExpenditure"
             android:layout_weight="2"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:completionThreshold="1"
+            />
 
     </LinearLayout>
 
