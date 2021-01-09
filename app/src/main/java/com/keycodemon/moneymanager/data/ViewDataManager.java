@@ -5,11 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieEntry;
 import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 import com.keycodemon.moneymanager.viewmodel.ItemDetailData;
@@ -66,7 +68,7 @@ public class ViewDataManager extends DBManager{
                 " GROUP BY " + REVENUE_EXPENDITURE_DATE +
                 " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(revenueQuery, null);
+         Cursor cursor = db.rawQuery(revenueQuery, null);
         if(cursor.moveToFirst()){
             do{
                 String date = cursor.getString(0);
@@ -74,7 +76,7 @@ public class ViewDataManager extends DBManager{
                 if(revenuemonth == month){
                     revenueMoney += cursor.getLong(1);
                 }
-            }while (cursor.moveToFirst());
+            }while (cursor.moveToNext());
         }
         Log.d("tt",revenueMoney.toString());
         cursor.close();
@@ -82,8 +84,69 @@ public class ViewDataManager extends DBManager{
 
         return revenueMoney;
     }
+    public ArrayList<String> GetYearForSpinner(){
+        ArrayList<String> arrayList = new ArrayList<>();
+        String query = " SELECT "+REVENUE_EXPENDITURE_DATE+" FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            String temp="";
+            do{
+                    String date = cursor.getString(0);
+                    String year = date.substring(6, 10);
+                    if(!temp.equals(year)){
+                        arrayList.add(year);
+                        temp = date.substring(6, 10);
+                    }
+            }while (cursor.moveToNext());
+        }
+        return  arrayList;
+    }
+    public ArrayList<PieEntry> GetEvenuePieChartByMonth(int Pmonth, int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+        CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                    String date = cursor.getString(0);
+                    int month = Integer.parseInt(date.substring(3, 5));
+                    int year = Integer.parseInt(date.substring(6, 10));
+                    if(month == Pmonth && year == Pyear){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
 
-    public ArrayList<BarEntry> GetEvenueBarEntry(){
+    public ArrayList<PieEntry> GetExpenditurePieChartByMonth(int Pmonth, int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int month = Integer.parseInt(date.substring(3, 5));
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(month == Pmonth && year == Pyear){
+                    Long money = cursor.getLong(1);
+                    String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
+
+    public ArrayList<BarEntry> GetEvenueBarEntryByMonth(){
         ArrayList<BarEntry> barEntries = new ArrayList<>();
         BarEntry barEntry =new BarEntry(1, GetEvenuebyMonth(1));
         barEntries.add(barEntry);
@@ -117,12 +180,12 @@ public class ViewDataManager extends DBManager{
                 if(revenuemonth == month){
                     expenditureMoney += cursor.getLong(1);
                 }
-            }while (cursor.moveToFirst());
+            }while (cursor.moveToNext());
         }
         return expenditureMoney;
     }
 
-    public ArrayList<BarEntry>  GetExpenditureBarEntry(){
+    public ArrayList<BarEntry>  GetExpenditureBarEntryByMonth(){
         ArrayList<BarEntry> barEntries = new ArrayList<>();
         barEntries.add(new BarEntry(1, GetExpenditurebyMonth(1)));
         barEntries.add(new BarEntry(2, GetExpenditurebyMonth(2)));
