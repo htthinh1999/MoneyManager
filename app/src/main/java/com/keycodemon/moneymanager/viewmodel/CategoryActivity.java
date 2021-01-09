@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,6 +55,8 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        init();
     }
 
 
@@ -129,6 +134,9 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         }
         // First categories
         categories = expenditureCategories;
+
+        setItemAutoTextView();
+
     }
 
     private void changeButtonsColor(String buttonName){
@@ -157,6 +165,11 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 //        setUpKeyboard(accounts);
     }
 
+    private void setItemAutoTextView(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, categories);
+        etCategoryName.setAdapter(adapter);
+    }
+
     private void saveData(){
         String categoryName = etCategoryName.getText().toString();
         if( idOfCategory == 0){
@@ -171,7 +184,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     private void deleteData() {
 //        int id = getIntent().getIntExtra("id", 0);
-        dbManager.deleteAccount(idOfCategory);
+        dbManager.deleteCategory(idOfCategory);
     }
 
     private boolean validInput(){
@@ -181,10 +194,57 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 
+    private AlertDialog AskOption()
+    {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
+                // set message, title, and icon
+                .setTitle("Xóa")
+                .setMessage("Bạn muốn xóa thể loại này?")
+//                .setIcon(R.drawable.delete)
+
+                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //your deleting code
+                        deleteData();
+                        setResult(RESULT_OK);
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                })
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
+    }
+
     @Override
     public void onClick(View v) {
         String buttonText = ((Button) v).getText().toString();
         switch (v.getId()){
+            case R.id.btnRevenue:
+                changeButtonsColor(buttonText);
+                categories = revenueCategories;
+                etCategoryName.setText("");
+                etCategoryName.requestFocus();
+                formID = 1;
+                setItemAutoTextView();
+                break;
+            case R.id.btnExpenditure:
+                changeButtonsColor(buttonText);
+                categories = expenditureCategories;
+                etCategoryName.setText("");
+                etCategoryName.requestFocus();
+                formID = 2;
+                setItemAutoTextView();
+                break;
             case R.id.btnSave:
                 if(validInput()){
                     saveData();
@@ -195,9 +255,17 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.btnDelete:
-                deleteData();
-                setResult(RESULT_OK);
-                finish();
+                if(validInput()) {
+                    AlertDialog diaBox = AskOption();
+                    diaBox.show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Không có gì để xóa!", Toast.LENGTH_LONG).show();
+                }
+//                setResult(RESULT_OK);
+//                finish();
+//                deleteData();
+
                 break;
             case R.id.btnCancel:
                 setResult(RESULT_OK);
@@ -237,6 +305,11 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String itemName = categories[position];
+//        etCategoryName.setText( categories[position] );
+//        Toast.makeText(this, accounts[position], Toast.LENGTH_SHORT).show();
 
+        idOfCategory = categoryID.get(itemName);
     }
+
 }

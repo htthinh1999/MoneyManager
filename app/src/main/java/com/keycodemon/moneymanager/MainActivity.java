@@ -9,6 +9,7 @@ import com.keycodemon.moneymanager.adapter.CustomExpandableListAdapter;
 import com.keycodemon.moneymanager.data.DBManager;
 import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 import com.keycodemon.moneymanager.data.ExpandableGetData;
+import com.keycodemon.moneymanager.viewmodel.CategoryActivity;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 
 import androidx.annotation.Nullable;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     List<DayData> dayDataList;
 
     View fabBGLayout;
-    FloatingActionButton fabMenu, fabRevenueExpenditure, fabSavingDeposit, fabAccount;
+    FloatingActionButton fabMenu, fabRevenueExpenditure, fabSavingDeposit, fabAccount, fabCategory;
     ExpandableGetData expandableGetData;
 
     boolean fabOpened = false;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabRevenueExpenditure = findViewById(R.id.fabRevenueExpenditure);
         fabSavingDeposit = findViewById(R.id.fabSavingDeposit);
         fabAccount = findViewById(R.id.fabAccount);
+        fabCategory = findViewById(R.id.fabCategory);
 
         expandableListView = findViewById(R.id.expandable_listview);
 
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabRevenueExpenditure.setOnClickListener(this);
         fabSavingDeposit.setOnClickListener(this);
         fabAccount.setOnClickListener(this);
+        fabCategory.setOnClickListener(this);
 
     }
 
@@ -120,11 +123,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabSavingDeposit.setVisibility(View.VISIBLE);
         fabBGLayout.setVisibility(View.VISIBLE);
         fabAccount.setVisibility(View.VISIBLE);
+        fabCategory.setVisibility(View.VISIBLE);
 
         fabMenu.animate().rotationBy(225);
         fabRevenueExpenditure.animate().translationY(-getResources().getDimension(R.dimen.fab_revenue_expenditure_margin));
         fabSavingDeposit.animate().translationY(-getResources().getDimension(R.dimen.fab_saving_deposit_margin));
         fabAccount.animate().translationY(-getResources().getDimension(R.dimen.fab_account));
+        fabCategory.animate().translationY(-getResources().getDimension(R.dimen.fab_category));
 
     }
 
@@ -135,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabRevenueExpenditure.animate().translationY(0);
         fabSavingDeposit.animate().translationY(0);
         fabAccount.animate().translationY(0);
+        fabCategory.animate().translationY(0);
 
         fabSavingDeposit.animate().translationY(0).setListener(new Animator.AnimatorListener() {
             @Override
@@ -148,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fabRevenueExpenditure.setVisibility(View.GONE);
                     fabSavingDeposit.setVisibility(View.GONE);
                     fabAccount.setVisibility(View.GONE);
+                    fabCategory.setVisibility(View.GONE);
                 }
             }
 
@@ -180,6 +187,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 closeFabMenu();
                 // Move to Item Detail Activity
                 Intent intent = new Intent(getApplicationContext(), ItemDetailActivity.class);
+                startActivityForResult(intent, 0);
+                break;
+            case R.id.fabCategory:
+                closeFabMenu();
+                // Move to Item Detail Activity
+                intent = new Intent(getApplicationContext(), CategoryActivity.class);
                 startActivityForResult(intent, 0);
                 break;
             case R.id.fabSavingDeposit:

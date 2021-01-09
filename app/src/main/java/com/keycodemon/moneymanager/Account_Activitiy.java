@@ -2,6 +2,8 @@ package com.keycodemon.moneymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -96,7 +98,7 @@ public class Account_Activitiy extends AppCompatActivity implements View.OnClick
 //        Log.d("adapter1", String.valueOf(adapter));
         etAccountName.setAdapter(adapter);
 
-        
+
     }
 
 
@@ -250,7 +252,36 @@ public class Account_Activitiy extends AppCompatActivity implements View.OnClick
         return true;
     }
 
+    private AlertDialog AskOption()
+    {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
+                // set message, title, and icon
+                .setTitle("Xóa")
+                .setMessage("Bạn muốn xóa tài khoản này?")
+//                .setIcon(R.drawable.delete)
 
+                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //your deleting code
+                        deleteData();
+                        setResult(RESULT_OK);
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                })
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
+    }
 
     @Override
     public void onClick(View v) {
@@ -266,9 +297,16 @@ public class Account_Activitiy extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.btnDelete:
-                deleteData();
-                setResult(RESULT_OK);
-                finish();
+                if(validInput()) {
+                    AlertDialog diaBox = AskOption();
+                    diaBox.show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Không có gì để xóa!", Toast.LENGTH_LONG).show();
+                }
+//                deleteData();
+//                setResult(RESULT_OK);
+//                finish();
                 break;
             case R.id.btnCancel:
                 setResult(RESULT_OK);
