@@ -60,7 +60,7 @@ public class ViewDataManager extends DBManager{
         dayAddedPosition = new HashMap<>();
     }
 
-    public Long GetEvenuebyMonth(int month) {
+    public Long GetEvenuebyMonth(int month,int Byear) {
         Long revenueMoney = 0l;
         String revenueQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
                 " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
@@ -73,7 +73,8 @@ public class ViewDataManager extends DBManager{
             do{
                 String date = cursor.getString(0);
                 int revenuemonth = Integer.valueOf(date.substring(3, 5));
-                if(revenuemonth == month){
+                int revenueyear = Integer.valueOf(date.substring(6, 10));
+                if(revenuemonth == month && revenueyear == Byear){
                     revenueMoney += cursor.getLong(1);
                 }
             }while (cursor.moveToNext());
@@ -85,25 +86,25 @@ public class ViewDataManager extends DBManager{
         return revenueMoney;
     }
 
-    public ArrayList<BarEntry> GetEvenueBarEntryByMonth(){
+    public ArrayList<BarEntry> GetEvenueBarEntryByMonth(int Byear){
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        BarEntry barEntry =new BarEntry(1, GetEvenuebyMonth(1));
+        BarEntry barEntry =new BarEntry(1, GetEvenuebyMonth(1,Byear));
         barEntries.add(barEntry);
-        barEntries.add(new BarEntry(2, GetEvenuebyMonth(2)));
-        barEntries.add(new BarEntry(3, GetEvenuebyMonth(3)));
-        barEntries.add(new BarEntry(4, GetEvenuebyMonth(4)));
-        barEntries.add(new BarEntry(5, GetEvenuebyMonth(5)));
-        barEntries.add(new BarEntry(6, GetEvenuebyMonth(6)));
-        barEntries.add(new BarEntry(7, GetEvenuebyMonth(7)));
-        barEntries.add(new BarEntry(8, GetEvenuebyMonth(8)));
-        barEntries.add(new BarEntry(9, GetEvenuebyMonth(9)));
-        barEntries.add(new BarEntry(10, GetEvenuebyMonth(10)));
-        barEntries.add(new BarEntry(11, GetEvenuebyMonth(11)));
-        barEntries.add(new BarEntry(12, GetEvenuebyMonth(12)));
+        barEntries.add(new BarEntry(2, GetEvenuebyMonth(2,Byear)));
+        barEntries.add(new BarEntry(3, GetEvenuebyMonth(3,Byear)));
+        barEntries.add(new BarEntry(4, GetEvenuebyMonth(4,Byear)));
+        barEntries.add(new BarEntry(5, GetEvenuebyMonth(5,Byear)));
+        barEntries.add(new BarEntry(6, GetEvenuebyMonth(6,Byear)));
+        barEntries.add(new BarEntry(7, GetEvenuebyMonth(7,Byear)));
+        barEntries.add(new BarEntry(8, GetEvenuebyMonth(8,Byear)));
+        barEntries.add(new BarEntry(9, GetEvenuebyMonth(9,Byear)));
+        barEntries.add(new BarEntry(10, GetEvenuebyMonth(10,Byear)));
+        barEntries.add(new BarEntry(11, GetEvenuebyMonth(11,Byear)));
+        barEntries.add(new BarEntry(12, GetEvenuebyMonth(12,Byear)));
         return  barEntries;
     }
 
-    public Long GetExpenditurebyMonth(int month) {
+    public Long GetExpenditurebyMonth(int month,int Byear) {
         Long expenditureMoney = 0l;
         String revenueQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
                 " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
@@ -115,8 +116,9 @@ public class ViewDataManager extends DBManager{
         if(cursor.moveToFirst()){
             do{
                 String date = cursor.getString(0);
-                int revenuemonth = Integer.valueOf(date.substring(3, 5));
-                if(revenuemonth == month){
+                int expendituremonth = Integer.valueOf(date.substring(3, 5));
+                int expenditureyear = Integer.valueOf(date.substring(6, 10));
+                if(expendituremonth == month && expenditureyear == Byear){
                     expenditureMoney += cursor.getLong(1);
                 }
             }while (cursor.moveToNext());
@@ -124,24 +126,74 @@ public class ViewDataManager extends DBManager{
         return expenditureMoney;
     }
 
-    public ArrayList<BarEntry>  GetExpenditureBarEntryByMonth(){
+    public ArrayList<BarEntry>  GetExpenditureBarEntryByMonth(int Byear){
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(1, GetExpenditurebyMonth(1)));
-        barEntries.add(new BarEntry(2, GetExpenditurebyMonth(2)));
-        barEntries.add(new BarEntry(3, GetExpenditurebyMonth(3)));
-        barEntries.add(new BarEntry(4, GetExpenditurebyMonth(4)));
-        barEntries.add(new BarEntry(5, GetExpenditurebyMonth(5)));
-        barEntries.add(new BarEntry(6, GetExpenditurebyMonth(6)));
-        barEntries.add(new BarEntry(7, GetExpenditurebyMonth(7)));
-        barEntries.add(new BarEntry(8, GetExpenditurebyMonth(8)));
-        barEntries.add(new BarEntry(9, GetExpenditurebyMonth(9)));
-        barEntries.add(new BarEntry(10, GetExpenditurebyMonth(10)));
-        barEntries.add(new BarEntry(11, GetExpenditurebyMonth(11)));
-        barEntries.add(new BarEntry(12, GetExpenditurebyMonth(12)));
+        barEntries.add(new BarEntry(1, GetExpenditurebyMonth(1, Byear)));
+        barEntries.add(new BarEntry(2, GetExpenditurebyMonth(2, Byear)));
+        barEntries.add(new BarEntry(3, GetExpenditurebyMonth(3, Byear)));
+        barEntries.add(new BarEntry(4, GetExpenditurebyMonth(4, Byear)));
+        barEntries.add(new BarEntry(5, GetExpenditurebyMonth(5, Byear)));
+        barEntries.add(new BarEntry(6, GetExpenditurebyMonth(6, Byear)));
+        barEntries.add(new BarEntry(7, GetExpenditurebyMonth(7, Byear)));
+        barEntries.add(new BarEntry(8, GetExpenditurebyMonth(8, Byear)));
+        barEntries.add(new BarEntry(9, GetExpenditurebyMonth(9, Byear)));
+        barEntries.add(new BarEntry(10, GetExpenditurebyMonth(10, Byear)));
+        barEntries.add(new BarEntry(11, GetExpenditurebyMonth(11, Byear)));
+        barEntries.add(new BarEntry(12, GetExpenditurebyMonth(12, Byear)));
         return  barEntries;
     }
 
+    public ArrayList<BarEntry>  GetEvenueBarEntryByQuarter(int Byear){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(1, GetEvenuebyMonth(1, Byear) + GetEvenuebyMonth(2, Byear) + GetEvenuebyMonth(3, Byear)));
+        barEntries.add(new BarEntry(2, GetEvenuebyMonth(4, Byear) + GetEvenuebyMonth(5, Byear) + GetEvenuebyMonth(6, Byear)));
+        barEntries.add(new BarEntry(3, GetEvenuebyMonth(7, Byear) + GetEvenuebyMonth(8, Byear) + GetEvenuebyMonth(9, Byear)));
+        barEntries.add(new BarEntry(4, GetEvenuebyMonth(10, Byear) + GetEvenuebyMonth(11, Byear) + GetEvenuebyMonth(12, Byear)));
+        return barEntries;
+    }
+    public ArrayList<BarEntry>  GetExpenditureBarEntryByQuarter(int Byear){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(1, GetExpenditurebyMonth(1, Byear) + GetExpenditurebyMonth(2, Byear) + GetExpenditurebyMonth(3, Byear)));
+        barEntries.add(new BarEntry(2, GetExpenditurebyMonth(4, Byear) + GetExpenditurebyMonth(5, Byear) + GetExpenditurebyMonth(6, Byear)));
+        barEntries.add(new BarEntry(3, GetExpenditurebyMonth(7, Byear) + GetExpenditurebyMonth(8, Byear) + GetExpenditurebyMonth(9, Byear)));
+        barEntries.add(new BarEntry(4, GetExpenditurebyMonth(10, Byear) + GetExpenditurebyMonth(11, Byear) + GetExpenditurebyMonth(12, Byear)));
+        return barEntries;
+    }
 
+    public Long GetEvenueByYear(int Byear){
+        Long evenuemoney = 0l;
+        evenuemoney = GetEvenuebyMonth(1,Byear) + GetEvenuebyMonth(2,Byear) + GetEvenuebyMonth(3,Byear) + GetEvenuebyMonth(4,Byear) +
+                GetEvenuebyMonth(5,Byear) + GetEvenuebyMonth(6,Byear) + GetEvenuebyMonth(7,Byear) + GetEvenuebyMonth(8,Byear) +
+                GetEvenuebyMonth(9,Byear) + GetEvenuebyMonth(10,Byear) + GetEvenuebyMonth(11,Byear) + GetEvenuebyMonth(12,Byear) ;
+        return  evenuemoney;
+    }
+
+    public Long GetExpenditureByYear(int Byear){
+        Long expendituremoney = 0l;
+        expendituremoney = GetExpenditurebyMonth(1,Byear) + GetExpenditurebyMonth(2,Byear) + GetExpenditurebyMonth(3,Byear) + GetExpenditurebyMonth(4,Byear) +
+                GetExpenditurebyMonth(5,Byear) + GetExpenditurebyMonth(6,Byear) + GetExpenditurebyMonth(7,Byear) + GetExpenditurebyMonth(8,Byear) +
+                GetExpenditurebyMonth(9,Byear) + GetExpenditurebyMonth(10,Byear) + GetExpenditurebyMonth(11,Byear) + GetExpenditurebyMonth(12,Byear) ;
+        return  expendituremoney;
+    }
+
+    public ArrayList<BarEntry>  GetEvenueBarEntryByYear(){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        ArrayList<String> listYear =  GetYearForSpinner();
+        int count = listYear.size();
+        for(int i=1;i<=count;i++){
+            barEntries.add(new BarEntry(i,GetEvenueByYear(Integer.parseInt(listYear.get(i-1)))));
+        }
+        return barEntries;
+    }
+    public ArrayList<BarEntry>  GetExpenditureEntryByYear(){
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        ArrayList<String> listYear =  GetYearForSpinner();
+        int count = listYear.size();
+        for(int i=1;i<=count;i++){
+            barEntries.add(new BarEntry(i,GetExpenditureByYear(Integer.parseInt(listYear.get(i-1)))));
+        }
+        return barEntries;
+    }
 
     public ArrayList<String> GetYearForSpinner(){
         ArrayList<String> arrayList = new ArrayList<>();
@@ -295,7 +347,46 @@ public class ViewDataManager extends DBManager{
         }
         return pieEntryArrayList;
     }
-
+    public ArrayList<PieEntry> GetEvenuePieChartByYear(int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(year == Pyear){
+                    Long money = cursor.getLong(1);
+                    String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
+    public ArrayList<PieEntry> GetExpenditurePieChartByYear(int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(year == Pyear){
+                    Long money = cursor.getLong(1);
+                    String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
     public List<DayData> getAllDayData(){
         List<DayData> dayDataList = new ArrayList<>();
 
