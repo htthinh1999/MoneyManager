@@ -84,67 +84,6 @@ public class ViewDataManager extends DBManager{
 
         return revenueMoney;
     }
-    public ArrayList<String> GetYearForSpinner(){
-        ArrayList<String> arrayList = new ArrayList<>();
-        String query = " SELECT "+REVENUE_EXPENDITURE_DATE+" FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if(cursor.moveToFirst()){
-            String temp="";
-            do{
-                    String date = cursor.getString(0);
-                    String year = date.substring(6, 10);
-                    if(!temp.equals(year)){
-                        arrayList.add(year);
-                        temp = date.substring(6, 10);
-                    }
-            }while (cursor.moveToNext());
-        }
-        return  arrayList;
-    }
-    public ArrayList<PieEntry> GetEvenuePieChartByMonth(int Pmonth, int Pyear){
-        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-        CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if(cursor.moveToFirst()){
-            do{
-                    String date = cursor.getString(0);
-                    int month = Integer.parseInt(date.substring(3, 5));
-                    int year = Integer.parseInt(date.substring(6, 10));
-                    if(month == Pmonth && year == Pyear){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
-                }
-            }while (cursor.moveToNext());
-        }
-        return pieEntryArrayList;
-    }
-
-    public ArrayList<PieEntry> GetExpenditurePieChartByMonth(int Pmonth, int Pyear){
-        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if(cursor.moveToFirst()){
-            do{
-                String date = cursor.getString(0);
-                int month = Integer.parseInt(date.substring(3, 5));
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(month == Pmonth && year == Pyear){
-                    Long money = cursor.getLong(1);
-                    String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
-                }
-            }while (cursor.moveToNext());
-        }
-        return pieEntryArrayList;
-    }
 
     public ArrayList<BarEntry> GetEvenueBarEntryByMonth(){
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -200,6 +139,161 @@ public class ViewDataManager extends DBManager{
         barEntries.add(new BarEntry(11, GetExpenditurebyMonth(11)));
         barEntries.add(new BarEntry(12, GetExpenditurebyMonth(12)));
         return  barEntries;
+    }
+
+
+
+    public ArrayList<String> GetYearForSpinner(){
+        ArrayList<String> arrayList = new ArrayList<>();
+        String query = " SELECT "+REVENUE_EXPENDITURE_DATE+" FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            String temp="";
+            do{
+                    String date = cursor.getString(0);
+                    String year = date.substring(6, 10);
+                    if(!temp.equals(year)){
+                        arrayList.add(year);
+                        temp = date.substring(6, 10);
+                    }
+            }while (cursor.moveToNext());
+        }
+        return  arrayList;
+    }
+
+    public ArrayList<PieEntry> GetEvenuePieChartByMonth(int Pmonth, int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+        CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                    String date = cursor.getString(0);
+                    int month = Integer.parseInt(date.substring(3, 5));
+                    int year = Integer.parseInt(date.substring(6, 10));
+                    if(month == Pmonth && year == Pyear){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
+
+    public ArrayList<PieEntry> GetExpenditurePieChartByMonth(int Pmonth, int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int month = Integer.parseInt(date.substring(3, 5));
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(month == Pmonth && year == Pyear){
+                    Long money = cursor.getLong(1);
+                    String category = cursor.getString(2);
+                    pieEntryArrayList.add(new PieEntry(money,category));
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
+
+    public ArrayList<PieEntry> GetEvenuePieChartByQuarter(int Pquarter,int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int month = Integer.parseInt(date.substring(3, 5));
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(Pquarter == 1){
+                    if((month == 1 && year == Pyear) || (month == 2 && year == Pyear) || (month == 3 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 2){
+                    if((month == 4 && year == Pyear) || (month == 5 && year == Pyear) || (month == 6 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 3){
+                    if((month == 7 && year == Pyear) || (month == 8 && year == Pyear) || (month == 9 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 4){
+                    if((month == 10 && year == Pyear) || (month == 11 && year == Pyear) || (month == 12 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
+    }
+
+    public ArrayList<PieEntry> GetExpenditurePieChartByQuarter(int Pquarter,int Pyear){
+        ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
+        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.moveToFirst()){
+            do{
+                String date = cursor.getString(0);
+                int month = Integer.parseInt(date.substring(3, 5));
+                int year = Integer.parseInt(date.substring(6, 10));
+                if(Pquarter == 1){
+                    if((month == 1 && year == Pyear) || (month == 2 && year == Pyear) || (month == 3 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 2){
+                    if((month == 4 && year == Pyear) || (month == 5 && year == Pyear) || (month == 6 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 3){
+                    if((month == 7 && year == Pyear) || (month == 8 && year == Pyear) || (month == 9 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+                if(Pquarter == 4){
+                    if((month == 10 && year == Pyear) || (month == 11 && year == Pyear) || (month == 12 && year == Pyear)){
+                        Long money = cursor.getLong(1);
+                        String category = cursor.getString(2);
+                        pieEntryArrayList.add(new PieEntry(money,category));
+                    }
+                }
+            }while (cursor.moveToNext());
+        }
+        return pieEntryArrayList;
     }
 
     public List<DayData> getAllDayData(){

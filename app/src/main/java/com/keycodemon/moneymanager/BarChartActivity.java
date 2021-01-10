@@ -7,11 +7,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.charts.Pie;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -46,7 +42,9 @@ public class BarChartActivity extends AppCompatActivity {
     PieChart pieChart_Expenditure;
     Spinner spinner_Month;
     Spinner spinner_Year;
+    Spinner spinner_Quarter;
     ArrayList<String> spinnerList_Month;
+    ArrayList<String> spinnerList_Quarter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +56,7 @@ public class BarChartActivity extends AppCompatActivity {
         pieChart_Expenditure = findViewById(R.id.pieChart_Expenditure);
         spinner_Month = findViewById(R.id.Spinner_Month);
         spinner_Year = findViewById(R.id.Spinner_Year);
+        spinner_Quarter = findViewById(R.id.Spinner_Quarter);
         Init_PieChart();
         Init_Spinner();
 
@@ -78,6 +77,13 @@ public class BarChartActivity extends AppCompatActivity {
         spinnerList_Month.add("12");
         ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_spinner_item,spinnerList_Month);
         spinner_Month.setAdapter(arrayAdapter);
+        spinnerList_Quarter = new ArrayList<>();
+        spinnerList_Quarter.add("1");
+        spinnerList_Quarter.add("2");
+        spinnerList_Quarter.add("3");
+        spinnerList_Quarter.add("4");
+        ArrayAdapter arrayAdapter_Quarter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_item,spinnerList_Quarter);
+        spinner_Quarter.setAdapter(arrayAdapter_Quarter);
         ArrayAdapter arrayAdapter_year = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_spinner_item,viewDataManager.GetYearForSpinner());
         spinner_Year.setAdapter(arrayAdapter_year);
     }
