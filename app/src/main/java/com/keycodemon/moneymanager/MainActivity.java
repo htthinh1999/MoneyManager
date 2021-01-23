@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         fragment = new ListDateFragment();
                         break;
                     case R.id.action_report:
+                        fragment = new BarChartFragment();
                         break;
                     case R.id.action_account:
                         break;
