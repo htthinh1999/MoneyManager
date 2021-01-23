@@ -1,5 +1,6 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_bottom">80dp</dimen>
+    <dimen name="fab_margin_right">16dp</dimen>
     <dimen name="fab_revenue_expenditure_margin">80dp</dimen>
     <dimen name="fab_saving_deposit_margin">144dp</dimen>
     <dimen name="fab_account">208dp</dimen>
