@@ -4,14 +4,17 @@ import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.keycodemon.moneymanager.adapter.CustomExpandableListAdapter;
 import com.keycodemon.moneymanager.data.ExpandableGetData;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import android.view.View;
 
@@ -23,13 +26,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    CustomExpandableListAdapter customExpandableListAdapter;
-    ExpandableListView expandableListView;
-    List<DayData> dayDataList;
-
     View fabBGLayout;
     FloatingActionButton fabMenu, fabRevenueExpenditure, fabSavingDeposit, fabAccount, fabCategory;
-    ExpandableGetData expandableGetData;
+    BottomNavigationView bottomNavigationView;
 
     boolean fabOpened = false;
 
@@ -39,26 +38,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         init();
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        dayDataList = expandableGetData.getData();
-        customExpandableListAdapter = new CustomExpandableListAdapter(this, dayDataList);
-        expandableListView.setAdapter(customExpandableListAdapter);
-        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter, this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListDateFragment()).commit();
 
     }
 
     public void init(){
         initWidget();
-        initData();
     }
 
     public void initWidget(){
@@ -68,8 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabSavingDeposit = findViewById(R.id.fabSavingDeposit);
         fabAccount = findViewById(R.id.fabAccount);
         fabCategory = findViewById(R.id.fabCategory);
-
-        expandableListView = findViewById(R.id.expandable_listview);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         fabBGLayout.setOnClickListener(this);
         fabMenu.setOnClickListener(this);
@@ -78,38 +68,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabAccount.setOnClickListener(this);
         fabCategory.setOnClickListener(this);
 
-    }
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-    public void initData(){
+                Fragment fragment = null;
 
-        expandableGetData = new ExpandableGetData(this);
-        dayDataList = expandableGetData.getData();
-        customExpandableListAdapter = new CustomExpandableListAdapter(this, dayDataList);
-        expandableListView.setAdapter(customExpandableListAdapter);
-        expandableGetData.detailListViewItem(expandableListView, customExpandableListAdapter, this);
-    }
+                switch (item.getItemId()){
+                    case R.id.action_date:
+                        fragment = new ListDateFragment();
+                        break;
+                    case R.id.action_report:
+                        fragment = new BarChartFragment();
+                        break;
+                    case R.id.action_account:
+                        break;
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
 
+                return true;
+            }
+        });
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListDateFragment()).commit();
     }
 
     private void openFabMenu(){
