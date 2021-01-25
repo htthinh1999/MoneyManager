@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieEntry;
+import com.keycodemon.moneymanager.model.Account;
 import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
 import com.keycodemon.moneymanager.viewmodel.DayData;
 import com.keycodemon.moneymanager.viewmodel.ItemDetailData;
@@ -533,6 +534,26 @@ public class ViewDataManager extends DBManager{
         return itemDetailDataList;
 
 
+    }
+
+    public List<Account> getAccountBalanceList() {
+        List<Account> accountList = new ArrayList<Account>();
+        String query = "SELECT " + ACCOUNT_NAME + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " Inner Join " + TABLE_ACCOUNT + " GROUP BY " + ACCOUNT_NAME;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Account account = new Account();
+                account.setmAccountName(cursor.getString(0));
+                account.setmBalance(cursor.getFloat(1));
+                accountList.add(account);
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        db.close();
+        return accountList;
     }
 
 }
