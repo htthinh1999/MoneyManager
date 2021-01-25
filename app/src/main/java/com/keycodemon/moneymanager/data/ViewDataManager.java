@@ -538,20 +538,63 @@ public class ViewDataManager extends DBManager{
 
     public List<Account> getAccountBalanceList() {
         List<Account> accountList = new ArrayList<Account>();
-        String query = "SELECT " + ACCOUNT_NAME + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
-                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " Inner Join " + TABLE_ACCOUNT + " GROUP BY " + ACCOUNT_NAME;
+        String allaccount = "SELECT * FROM "+ TABLE_ACCOUNT;
+        String querythu = "SELECT " + ACCOUNT_NAME + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " re Inner Join " + TABLE_ACCOUNT + " a on " +
+                " a."+ACCOUNT_ID+" = re."+ACCOUNT_ID+
+                " WHERE "+FORM_ID+" = 1 "+
+                " GROUP BY " + ACCOUNT_NAME;
+        String querychi = "SELECT " + ACCOUNT_NAME + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " re Inner Join " + TABLE_ACCOUNT + " a on " +
+                " a."+ACCOUNT_ID+" = re."+ACCOUNT_ID+
+                " WHERE "+FORM_ID+" = 2 "+
+                " GROUP BY " + ACCOUNT_NAME;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
+        Cursor cursor3 = db.rawQuery(allaccount, null);
+        if (cursor3.moveToFirst()) {
             do {
                 Account account = new Account();
-                account.setmAccountName(cursor.getString(0));
-                account.setmBalance(cursor.getFloat(1));
+                account.setmAccountName(cursor3.getString(1));
+                account.setmBalance(cursor3.getFloat(2));
                 accountList.add(account);
+            } while (cursor3.moveToNext());
+        }
+        Cursor cursor = db.rawQuery(querychi, null);
+        if (cursor.moveToFirst()) {
+            do {
+                for(Account acc: accountList)
+                {
+//                    Log.d("an123", acc.getmAccountName());
+//                    Log.d("an123", cursor.getString(0) +"123aa");
+                    if(acc.getmAccountName().equals(cursor.getString(0)))
+                    {
+                        acc.setmBalance( acc.getmBalance() - cursor.getFloat(1));
+                    }
+                }
+
+
+
             } while (cursor.moveToNext());
 
         }
+        Cursor cursor2 = db.rawQuery(querythu, null);
+        if (cursor2.moveToFirst()) {
+            do {
+                for(Account acc: accountList)
+                {
+//                    Log.d("an123", acc.getmAccountName());
+//                    Log.d("an123", cursor.getString(0) +"123aa");
+                    if(acc.getmAccountName().equals(cursor2.getString(0)))
+                    {
+                        acc.setmBalance( acc.getmBalance() + cursor2.getFloat(1));
+                    }
+                }
+            } while (cursor2.moveToNext());
+
+        }
+
         cursor.close();
+        cursor2.close();
         db.close();
         return accountList;
     }

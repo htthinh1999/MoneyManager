@@ -82,7 +82,7 @@ public class AccountListFragment extends Fragment {
 
 
 
-        accountListAdapter = new AccountListAdapter(getActivity(), R.layout.fragment_account_list, accountList);
+        accountListAdapter = new AccountListAdapter(getActivity(), R.layout.list_account, accountList);
         AccountList.setAdapter(accountListAdapter);
 
 

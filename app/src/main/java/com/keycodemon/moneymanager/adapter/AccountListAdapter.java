@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.keycodemon.moneymanager.R;
 import com.keycodemon.moneymanager.model.Account;
 
@@ -49,7 +51,10 @@ public class AccountListAdapter extends BaseAdapter {
 
         Account account= AccountList.get(position);
         tvAccountName.setText(account.getmAccountName());
-        tvTotalMoney.setText((int) account.getmBalance());
+        tvTotalMoney.setText( String.valueOf(account.getmBalance()));
+        if(account.getmBalance() < 0){
+            tvTotalMoney.setTextColor(ContextCompat.getColor(context, R.color.colorExpenditure));
+        }
 
         return convertView;
     }
