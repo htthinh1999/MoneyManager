@@ -29,7 +29,8 @@ public class ListMonthFragment extends Fragment {
 
     TabLayout tabLayout;
     ViewPager viewPager;
-
+    ViewDataManager viewDataManager;
+    FragmentManager fragmentManager;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,15 +78,25 @@ public class ListMonthFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_month, container, false);
 
-        initWidget(view);
+        init(view);
         return view;
+    }
+
+    void init(View view){
+        initData();
+        initWidget(view);
+    }
+
+    void initData(){
+        viewDataManager = new ViewDataManager(getActivity());
+        fragmentManager = getActivity().getSupportFragmentManager();
     }
 
     void initWidget(View view){
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
 
-        ArrayList<String> arrayList = new ViewDataManager(getActivity()).getAllMonthExpenditureRevenue();
+        ArrayList<String> arrayList = viewDataManager.getAllMonthExpenditureRevenue();
 
         prepareViewPager(viewPager, arrayList);
 
@@ -93,7 +104,7 @@ public class ListMonthFragment extends Fragment {
     }
 
     private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList) {
-        MainAdapter adapter = new MainAdapter(getActivity().getSupportFragmentManager());
+        MainAdapter adapter = new MainAdapter(fragmentManager);
 
         ListDateFragment fragment = new ListDateFragment();
         for(int i=0; i<arrayList.size(); i++){
@@ -106,6 +117,14 @@ public class ListMonthFragment extends Fragment {
 
         viewPager.setAdapter(adapter);
 
+    }
+
+    public void updateData(){
+        ArrayList<String> arrayList = viewDataManager.getAllMonthExpenditureRevenue();
+
+        prepareViewPager(viewPager, arrayList);
+
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private class MainAdapter extends FragmentPagerAdapter {
