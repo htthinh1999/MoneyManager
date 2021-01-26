@@ -21,7 +21,7 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginRight="@dimen/fab_margin_right"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_item" />
+        app:srcCompat="@drawable/categories" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAccount"
@@ -31,7 +31,7 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginRight="@dimen/fab_margin_right"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_item" />
+        app:srcCompat="@drawable/wallet" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabRevenueExpenditure"
@@ -41,7 +41,7 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginRight="@dimen/fab_margin_right"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_item" />
+        app:srcCompat="@drawable/profits" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSavingDeposit"
@@ -50,8 +50,10 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginRight="@dimen/fab_margin_right"
+        android:scaleType="fitXY"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_item" />
+        app:srcCompat="@drawable/piggybank"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabMenu"
@@ -79,7 +81,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="?android:attr/windowBackground"
             app:itemBackground="@color/colorPrimary"
             android:foreground="?attr/selectableItemBackground"
             app:itemIconTint="@android:color/white"
