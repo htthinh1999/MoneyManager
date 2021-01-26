@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         fragment = new BarChartFragment();
                         break;
                     case R.id.action_account:
+                        fragment = new AccountListFragment();
                         break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
