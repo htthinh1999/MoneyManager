@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 switch (item.getItemId()){
                     case R.id.action_date:
-                        fragment = new ListDateFragment();
+                        fragment = new ListMonthFragment();
                         break;
                     case R.id.action_report:
                         fragment = new BarChartFragment();
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListDateFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListMonthFragment()).commit();
     }
 
     private void openFabMenu(){

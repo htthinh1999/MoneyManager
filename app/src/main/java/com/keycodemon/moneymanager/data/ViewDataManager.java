@@ -348,6 +348,7 @@ public class ViewDataManager extends DBManager{
         }
         return pieEntryArrayList;
     }
+
     public ArrayList<PieEntry> GetEvenuePieChartByYear(int Pyear){
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
         String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
@@ -368,6 +369,7 @@ public class ViewDataManager extends DBManager{
         }
         return pieEntryArrayList;
     }
+
     public ArrayList<PieEntry> GetExpenditurePieChartByYear(int Pyear){
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
         String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
@@ -388,6 +390,7 @@ public class ViewDataManager extends DBManager{
         }
         return pieEntryArrayList;
     }
+
     public List<DayData> getAllDayData(){
         List<DayData> dayDataList = new ArrayList<>();
 
@@ -434,6 +437,97 @@ public class ViewDataManager extends DBManager{
         String expenditureQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
                 " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
                 " WHERE " + FORM_ID + " = 2" +
+                " GROUP BY " + REVENUE_EXPENDITURE_DATE +
+                " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
+
+        cursor = db.rawQuery(expenditureQuery, null);
+
+        if(cursor.moveToFirst())
+        {
+            do{
+                String date = cursor.getString(0);
+                Long expenditureMoney = cursor.getLong(1);
+
+                if(dayAddedPosition.containsKey(date)){
+                    dayDataList.get(dayAddedPosition.get(date)).setExpenditure(expenditureMoney);
+                }else{
+
+                    String dayOfMonth = date.substring(0, 2);
+                    String month = date.substring(3, 5);
+                    String year = date.substring(6, 10);
+                    String month_year = date.substring(3, 10);
+                    Date dateFormat = Date.valueOf(year + "-" + month + "-" + dayOfMonth);
+                    String dayOfWeek = convertDayOfWeek((String) DateFormat.format("EEEE", dateFormat));
+
+                    DayData dayData = new DayData();
+                    dayData.setDayOfMonth(dayOfMonth);
+                    dayData.setDayofWeek(dayOfWeek);
+                    dayData.setMonthYear(month_year);
+                    dayData.setRevenue(0L);
+                    dayData.setExpenditure(expenditureMoney);
+                    dayData.setDate(date);
+
+                    dayDataList.add(dayData);
+                }
+
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        // Sort Day Data List
+        Collections.sort(dayDataList);
+
+        return dayDataList;
+    }
+
+    public List<DayData> getAllDayDataOfMonth(String monthOfYear){
+        List<DayData> dayDataList = new ArrayList<>();
+
+        // Get Day Date with revenue
+        String revenueQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
+                " WHERE " + FORM_ID + " = 1 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + monthOfYear + "'" +
+                " GROUP BY " + REVENUE_EXPENDITURE_DATE +
+                " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(revenueQuery, null);
+
+        if(cursor.moveToFirst())
+        {
+            int position = 0;
+            do{
+                DayData dayData = new DayData();
+
+                String date = cursor.getString(0);
+                String dayOfMonth = date.substring(0, 2);
+                String month = date.substring(3, 5);
+                String year = date.substring(6, 10);
+                String month_year = date.substring(3, 10);
+                Date dateFormat = Date.valueOf(year + "-" + month + "-" + dayOfMonth);
+                String dayOfWeek = convertDayOfWeek((String) DateFormat.format("EEEE", dateFormat));
+
+                dayData.setDayOfMonth(dayOfMonth);
+                dayData.setDayofWeek(dayOfWeek);
+                dayData.setMonthYear(month_year);
+                dayData.setRevenue(cursor.getLong(1));
+                dayData.setExpenditure(0L);
+                dayData.setDate(date);
+                dayAddedPosition.put(date, position);
+
+                dayDataList.add(dayData);
+
+                position++;
+            }while (cursor.moveToNext());
+        }
+
+        // Insert expenditure of each Day Data
+
+        String expenditureQuery = "SELECT " + REVENUE_EXPENDITURE_DATE + ", SUM(" + REVENUE_EXPENDITURE_MONEY + ")" +
+                " FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL +
+                " WHERE " + FORM_ID + " = 2 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + monthOfYear + "'" +
                 " GROUP BY " + REVENUE_EXPENDITURE_DATE +
                 " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
 
@@ -597,6 +691,24 @@ public class ViewDataManager extends DBManager{
         cursor2.close();
         db.close();
         return accountList;
+    }
+
+    public ArrayList<String> getAllMonthExpenditureRevenue(){
+        ArrayList<String> monthList = new ArrayList<>();
+
+        String query = "SELECT distinct strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) " +
+                "FROM "+ TABLE_REVENUE_EXPENDITURE_DETAIL +
+                " ORDER BY " + REVENUE_EXPENDITURE_DATE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                monthList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        return  monthList;
     }
 
 }
