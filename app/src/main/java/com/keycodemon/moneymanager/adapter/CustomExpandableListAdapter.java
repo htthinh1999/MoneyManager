@@ -1,4 +1,4 @@
-package com.keycodemon.moneymanager;
+package com.keycodemon.moneymanager.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,37 +7,43 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
+import com.keycodemon.moneymanager.R;
+import com.keycodemon.moneymanager.viewmodel.DayData;
+import com.keycodemon.moneymanager.viewmodel.ItemDetailData;
+
 import java.util.List;
 
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
-    private List<ExpandableListGroupData> expandableListGroupDataList;
+    private List<DayData> dayDataList;
 
 
-    public CustomExpandableListAdapter(Context context, List<ExpandableListGroupData> expandableListGroupDataList) {
+    public CustomExpandableListAdapter(Context context, List<DayData> dayDataList) {
         this.context = context;
-        this.expandableListGroupDataList = expandableListGroupDataList;
+        this.dayDataList = dayDataList;
     }
 
     @Override
     public int getGroupCount() {
-        return expandableListGroupDataList.size();
+        return dayDataList.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return expandableListGroupDataList.get(groupPosition).itemCount();
+        return dayDataList.get(groupPosition).itemCount();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
 
-        return expandableListGroupDataList.get(groupPosition);
+        return dayDataList.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return expandableListGroupDataList.get(groupPosition).getExpandableListItemDataList().get(childPosition);
+        return dayDataList.get(groupPosition).getItemDetailDataList().get(childPosition);
     }
 
     @Override
@@ -58,37 +64,45 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    private String separatorNumber(Long number){
+        return String.format("%,d", number).replace(",", " ").replace(".", " ") + " VNĐ";
+    }
+
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        ExpandableListGroupData expandableListGroupData = (ExpandableListGroupData) getGroup(groupPosition);
+        DayData dayData = (DayData) getGroup(groupPosition);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.list_day,null);
         TextView tvDayOfMonth = convertView.findViewById(R.id.tvDayOfMonth);
-        tvDayOfMonth.setText(expandableListGroupData.getDayOfMonth());
+        tvDayOfMonth.setText(dayData.getDayOfMonth());
         TextView tvMonthYear = convertView.findViewById(R.id.tvMonthYear);
-        tvMonthYear.setText(expandableListGroupData.getMonthYear());
+        tvMonthYear.setText(dayData.getMonthYear());
         TextView tvDayOfWeek = convertView.findViewById(R.id.tvDayOfWeek);
-        tvDayOfWeek.setText(expandableListGroupData.getDayofWeek());
+        tvDayOfWeek.setText(dayData.getDayofWeek());
         TextView tvRevenue = convertView.findViewById(R.id.tvRevenue);
-        tvRevenue.setText(expandableListGroupData.getRevenue());
+        tvRevenue.setText(separatorNumber(dayData.getRevenue()));
         TextView tvExpenditure = convertView.findViewById(R.id.tvExpenditure);
-        tvExpenditure.setText(expandableListGroupData.getExpenditure());
+        tvExpenditure.setText(separatorNumber(dayData.getExpenditure()));
         return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        ExpandableListItemData expandableListItemData = (ExpandableListItemData) getChild(groupPosition,childPosition);
+        ItemDetailData itemDetailData = (ItemDetailData) getChild(groupPosition,childPosition);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.list_item,null);
         TextView tvgroupitem = convertView.findViewById(R.id.tvGroupItem);
-        tvgroupitem.setText(expandableListItemData.getGroupItem());
+        tvgroupitem.setText(itemDetailData.getCategory());
         TextView tvitem = convertView.findViewById(R.id.tvItem);
-        tvitem.setText(expandableListItemData.getItem());
+        tvitem.setText(itemDetailData.getNote());
         TextView tvwallet = convertView.findViewById(R.id.tvWallet);
-        tvwallet.setText(expandableListItemData.getWallet());
-        TextView tvExpenditure = convertView.findViewById(R.id.tvExpenditure);
-        tvExpenditure.setText(expandableListItemData.getExpenditure());
+        tvwallet.setText(itemDetailData.getAccount());
+        TextView tvMoney = convertView.findViewById(R.id.tvMoney);
+        tvMoney.setText(separatorNumber(itemDetailData.getMoney()));
+
+        if(itemDetailData.getFormID() == 1){
+            tvMoney.setTextColor(ContextCompat.getColor(context, R.color.colorRevenue));
+        }
         return convertView;
     }
 

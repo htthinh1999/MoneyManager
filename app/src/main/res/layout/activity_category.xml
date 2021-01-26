@@ -8,11 +8,11 @@
     tools:context=".ItemDetailActivity"
     android:padding="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+<!--Tool = ItemDetailActivity ??-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Khoản thu chi"
+        android:text="Quản lý thể loại"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textStyle="bold"
@@ -50,124 +50,39 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="35dp"
         android:weightSum="8">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:text="Ngày"/>
-
-        <EditText
-            android:id="@+id/etDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="date"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Tài khoản"/>
-
-        <EditText
-            android:id="@+id/etAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Thể loại"/>
-
-        <EditText
-            android:id="@+id/etCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Số tiền"/>
-
-        <EditText
-            android:id="@+id/etMoney"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="numberSigned"
-            android:text="0"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Tên"/>
+            android:text="Tên thể loại"/>
 
         <AutoCompleteTextView
-            android:id="@+id/etTitle"
+            android:id="@+id/etCategoryName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorExpenditure"
             android:layout_weight="2"
             android:inputType="text"
-            android:completionThreshold="1"
+            android:completionThreshold="0"
             />
 
     </LinearLayout>
 
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="55dp"
         android:orientation="horizontal">
 
         <Button
@@ -181,6 +96,18 @@
             android:text="Lưu"/>
 
         <Button
+            android:id="@+id/btnEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_fill_expenditure"
+            android:text="Sửa"
+            android:visibility="gone"
+            />
+
+        <Button
             android:id="@+id/btnDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -189,7 +116,8 @@
             android:textColor="@android:color/white"
             android:background="@drawable/btn_fill_expenditure"
             android:text="Xoá"
-            android:visibility="gone"/>
+            />
+
 
         <Button
             android:id="@+id/btnCancel"

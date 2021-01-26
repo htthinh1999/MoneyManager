@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,30 +22,47 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.keycodemon.moneymanager.data.DBManager;
+import com.keycodemon.moneymanager.model.Account;
+import com.keycodemon.moneymanager.model.Category;
+import com.keycodemon.moneymanager.model.RevenueExpenditureDetail;
+
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemDetailActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
+
+    DBManager dbManager;
 
     Button btnRevenue;
     Button btnExpenditure;
     Button btnSave;
+    Button btnDelete;
     Button btnCancel;
     EditText etDate;
     EditText etAccount;
     EditText etCategory;
     EditText etMoney;
-    EditText etNote;
+    AutoCompleteTextView etTitle;
     TableLayout tableLayout;
 
-    String[] accounts = new String[]{"Tiền mặt", "Tài khoản ngân hàng", "Thẻ tín dụng"};
-    String[] revenueCategories = new String[]{"Trả thêm giờ", "Tiền lương", "Tiền cấp", "Tiền thưởng", "Khác"};
-    String[] expenditureCategories = new String[]{"Ăn uống", "Sức khỏe", "Giải trí", "Sinh hoạt", "Áo quần", "Làm đẹp", "Giáo dục", "Sự kiện", "Đi chợ", "Khác"};
-    String[] categories = expenditureCategories;
+    String[] accounts;
+    String[] revenueCategories;
+    String[] expenditureCategories;
+    String[] categories;
+    String[] notes;
     String[] numbers = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "00 000", "0 000", "000", "0", "←"};
+
+    int formID = 2;
+    Map<String, Integer> accountID = new HashMap<>();
+    Map<String, Integer> categoryID = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +74,78 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
 
     private void init(){
         initWidget();
+        initData();
         initInAppKeyboard();
     }
 
+    private void initData(){
+        dbManager = new DBManager(this);
+
+        // Get account data
+        List<Account> accountList = dbManager.getAllAccount();
+        List<String> accountNames = new ArrayList<>();
+        for(Account acc: accountList){
+            accountNames.add(acc.getmAccountName());
+            accountID.put(acc.getmAccountName(), acc.getmAccountID());
+        }
+        accounts = new String[accountNames.size()];
+        accounts = accountNames.toArray(accounts);
+
+        // Get revenue category data
+        List<Category> revenueCategoryList = dbManager.getRevenueCategories();
+        List<String> revenueCategoryNames = new ArrayList<>();
+        for(Category category: revenueCategoryList){
+            revenueCategoryNames.add(category.getmCategoryName());
+        }
+        revenueCategories = new String[revenueCategoryNames.size()];
+        revenueCategories = revenueCategoryNames.toArray(revenueCategories);
+
+        // Get expenditure category data
+        List<Category> expenditureCategoryList = dbManager.getExpenditureCategories();
+        List<String> expenditureCategoryNames = new ArrayList<>();
+        for(Category category: expenditureCategoryList){
+            expenditureCategoryNames.add(category.getmCategoryName());
+        }
+        expenditureCategories = new String[expenditureCategoryNames.size()];
+        expenditureCategories = expenditureCategoryNames.toArray(expenditureCategories);
+
+        // Get all category data
+        List<Category> categoryList = dbManager.getAllCategory();
+        for(Category category: categoryList){
+            categoryID.put(category.getmCategoryName(), category.getmCategoryID());
+        }
+
+        // Get all notes
+        List<RevenueExpenditureDetail> revenueExpenditureDetailList = dbManager.getAllRevenueExpenditureDetail();
+        List<String> RevenueExpenditureDetailNotes = new ArrayList<>();
+        for(RevenueExpenditureDetail revenueExpenditureDetail: revenueExpenditureDetailList ){
+            RevenueExpenditureDetailNotes.add(revenueExpenditureDetail.getmNote());
+        }
+        notes = new String[RevenueExpenditureDetailNotes.size()];
+        notes = RevenueExpenditureDetailNotes.toArray(notes);
+
+        // First categories
+        categories = expenditureCategories;
+
+        setNoteAutoTextView();
+    }
+
     private void initWidget(){
+        // Hide action bar
+        if(getSupportActionBar().isShowing()){
+            getSupportActionBar().hide();
+        }
+
         btnRevenue = findViewById(R.id.btnRevenue);
         btnExpenditure = findViewById(R.id.btnExpenditure);
         btnSave = findViewById(R.id.btnSave);
+        btnDelete = findViewById(R.id.btnDelete);
         btnCancel = findViewById(R.id.btnCancel);
         etDate = findViewById(R.id.etDate);
         etAccount = findViewById(R.id.etAccount);
         etCategory = findViewById(R.id.etCategory);
         etMoney = findViewById(R.id.etMoney);
-        etNote = findViewById(R.id.etNote);
+        etTitle = findViewById(R.id.etTitle);
         tableLayout = findViewById(R.id.tableLayout);
 
         etDate.setInputType(InputType.TYPE_NULL);
@@ -77,12 +156,34 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         btnRevenue.setOnClickListener(this);
         btnExpenditure.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+        btnDelete.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
         etDate.setOnTouchListener(this);
         etAccount.setOnTouchListener(this);
         etCategory.setOnTouchListener(this);
         etMoney.setOnTouchListener(this);
-        etNote.setOnTouchListener(this);
+        etTitle.setOnTouchListener(this);
+
+        // Set current date
+        etDate.setText(getCurrentDate());
+
+        // Show data to view when item was clicked
+        if(getIntent().hasExtra("formID")){
+
+            if(getIntent().getIntExtra("formID", 2) == 1){
+                changeButtonsColor("THU");
+                categories = revenueCategories;
+                formID = 1;
+            }
+
+            etDate.setText(getIntent().getStringExtra("date"));
+            etAccount.setText(getIntent().getStringExtra("account"));
+            etCategory.setText(getIntent().getStringExtra("category"));
+            etMoney.setText(separatorNumber(getIntent().getLongExtra("money", 0)));
+            etTitle.setText(getIntent().getStringExtra("note"));
+
+            btnDelete.setVisibility(View.VISIBLE);
+        }
     }
 
     private void changeButtonsColor(String buttonName){
@@ -97,7 +198,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             DrawableCompat.setTint(etAccount.getBackground(), colorPos);
             DrawableCompat.setTint(etCategory.getBackground(), colorPos);
             DrawableCompat.setTint(etMoney.getBackground(), colorPos);
-            DrawableCompat.setTint(etNote.getBackground(), colorPos);
+            DrawableCompat.setTint(etTitle.getBackground(), colorPos);
         }else{
             int colorPos = ContextCompat.getColor(this, R.color.colorExpenditure);
             btnExpenditure.setTextColor(colorPos);
@@ -109,19 +210,27 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
             DrawableCompat.setTint(etAccount.getBackground(), colorPos);
             DrawableCompat.setTint(etCategory.getBackground(), colorPos);
             DrawableCompat.setTint(etMoney.getBackground(), colorPos);
-            DrawableCompat.setTint(etNote.getBackground(), colorPos);
+            DrawableCompat.setTint(etTitle.getBackground(), colorPos);
         }
+    }
+
+    private String getCurrentDate(){
+        int dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        return String.format("%02d",dayOfMonth) + "-" + String.format("%02d",month+1) + "-" + year;
     }
 
     private void showDatePicker(){
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                etDate.setText(dayOfMonth + "-" + (monthOfYear+1) + "-" + year);
+//            etDate.setText(dayOfMonth + "-" + (monthOfYear+1) + "-" + year);
+            etDate.setText(String.format("%02d",dayOfMonth) + "-" + String.format("%02d",monthOfYear+1) + "-" + year);
             }
         };
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, Calendar.getInstance().get(Calendar.YEAR),
-                                    Calendar.getInstance().get(Calendar.MONTH) + 1, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                                    Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -214,8 +323,44 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
         }catch (Exception ex){
             Toast.makeText(this, "Số bạn nhập quá lớn", Toast.LENGTH_LONG).show();
         }
+    }
 
+    private void saveData(){
 
+        String date = etDate.getText().toString();
+        String category = etCategory.getText().toString();
+        String account = etAccount.getText().toString();
+        float money = Float.valueOf(etMoney.getText().toString().replace(" ", ""));
+        String note = etTitle.getText().toString();
+
+        if(getIntent().getIntExtra("id", 0) == 0){
+            RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
+            dbManager.addRevenueExpenditureDetail(revenueExpenditureDetail);
+        }else{
+            int id = getIntent().getIntExtra("id", 0);
+            RevenueExpenditureDetail revenueExpenditureDetail = new RevenueExpenditureDetail(id, formID, categoryID.get(category), accountID.get(account), money, note, 0, date);
+            dbManager.updateRevenueExpenditureDetail(revenueExpenditureDetail);
+        }
+    }
+
+    private void deleteData(){
+        int id = getIntent().getIntExtra("id", 0);
+        dbManager.deleteRevenueExpenditureDetail(id);
+    }
+
+    private boolean validInput(){
+        if(String.valueOf(etDate.getText()).isEmpty() || String.valueOf(etAccount.getText()).isEmpty() ||
+                String.valueOf(etMoney.getText()).isEmpty() || String.valueOf(etMoney.getText()).equals("0") ||
+                String.valueOf(etCategory.getText()).isEmpty() || String.valueOf(etTitle.getText()).isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
+    private void setNoteAutoTextView()
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, notes);
+        etTitle.setAdapter(adapter);
     }
 
     @Override
@@ -227,18 +372,32 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                 categories = revenueCategories;
                 etCategory.setText("");
                 etCategory.requestFocus();
+                formID = 1;
                 break;
             case R.id.btnExpenditure:
                 changeButtonsColor(buttonText);
                 categories = expenditureCategories;
                 etCategory.setText("");
                 etCategory.requestFocus();
+                formID = 2;
                 break;
             case R.id.btnSave:
-
+                if(validInput()){
+                    saveData();
+                    setResult(RESULT_OK);
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Bạn cần phải nhập đầy đủ thông tin!", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.btnDelete:
+                deleteData();
+                setResult(RESULT_OK);
+                finish();
                 break;
             case R.id.btnCancel:
-
+                setResult(RESULT_OK);
+                finish();
                 break;
             default:
 
@@ -278,7 +437,7 @@ public class ItemDetailActivity extends AppCompatActivity implements View.OnClic
                     setUpKeyboard(numbers);
                     hideSoftKeyboard();
                     break;
-                case R.id.etNote:
+                case R.id.etTitle:
                     setUpKeyboard(new String[]{});
                     break;
             }
