@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Khoản thu chi"
+        android:text="Quản lý tài khoản"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textStyle="bold"
@@ -21,145 +21,28 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="25dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="2"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnRevenue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:background="@drawable/btn_no_select"
-            android:textColor="@android:color/darker_gray"
-            android:text="THU"/>
-
-        <Button
-            android:id="@+id/btnExpenditure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:background="@drawable/btn_expenditure"
-            android:textColor="@color/colorExpenditure"
-            android:text="CHI"/>
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="25dp"
         android:weightSum="8">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:text="Ngày"/>
-
-        <EditText
-            android:id="@+id/etDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="date"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Tài khoản"/>
-
-        <EditText
-            android:id="@+id/etAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Thể loại"/>
-
-        <EditText
-            android:id="@+id/etCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Số tiền"/>
-
-        <EditText
-            android:id="@+id/etMoney"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="numberSigned"
-            android:text="0"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Tên"/>
+            android:text="Tên tài khoản"/>
 
         <AutoCompleteTextView
-            android:id="@+id/etTitle"
+            android:id="@+id/etAccountName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorExpenditure"
             android:layout_weight="2"
             android:inputType="text"
-            android:completionThreshold="1"
+            android:completionThreshold="0"
             />
 
     </LinearLayout>
@@ -167,7 +50,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:weightSum="8"
+        android:layout_marginTop="25dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:text="Số dư"/>
+
+        <EditText
+            android:id="@+id/etBalance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorExpenditure"
+            android:layout_weight="2"
+            android:inputType="text"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
         android:orientation="horizontal">
 
         <Button
@@ -181,6 +90,18 @@
             android:text="Lưu"/>
 
         <Button
+            android:id="@+id/btnEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_fill_expenditure"
+            android:text="Sửa"
+            android:visibility="gone"
+            />
+
+        <Button
             android:id="@+id/btnDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -189,7 +110,8 @@
             android:textColor="@android:color/white"
             android:background="@drawable/btn_fill_expenditure"
             android:text="Xoá"
-            android:visibility="gone"/>
+            />
+
 
         <Button
             android:id="@+id/btnCancel"

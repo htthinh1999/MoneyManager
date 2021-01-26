@@ -3,8 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.keycodemon.moneymanager.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_date"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_revenue_expenditure"
+        android:icon="@drawable/btn_fill_primary"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_report"
+        android:orderInCategory="100"
+        android:title="@string/action_report"
+        android:icon="@drawable/btn_fill_primary"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_account"
+        android:orderInCategory="100"
+        android:title="@string/action_account"
+        android:icon="@drawable/btn_fill_primary"
         app:showAsAction="never" />
 </menu>

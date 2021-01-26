@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -37,6 +38,7 @@ public class DBManager extends SQLiteOpenHelper {
     private static final String REVENUE_EXPENDITURE_MONEY = "SoTien";
     private static final String REVENUE_EXPENDITURE_NOTE = "GhiChu";
     private static final String REVENUE_EXPENDITURE_PERIODIC = "DinhKy";
+    private static final String REVENUE_EXPENDITURE_DATE = "Ngay";
 
     private Context context;
     private static int VERSION = 1;
@@ -51,12 +53,12 @@ public class DBManager extends SQLiteOpenHelper {
             CATEGORY_NAME +" TEXT, " +
             "FOREIGN KEY (IDHinhThuc) references HINHTHUC(IDHinhThuc)) ";
 
-    private String Create_table_account_querry = "CREATE TABLE "+TABLE_ACCOUNT+" (" +
+    private String Create_table_account = "CREATE TABLE "+TABLE_ACCOUNT+" (" +
             ACCOUNT_ID +" integer primary key, "+
             ACCOUNT_NAME +" TEXT, "+
             ACCOUNT_BALANCE +" REAL)" ;
 
-    private String Create_table_RevenueExpenditureDetail_querry = "CREATE TABLE "+TABLE_REVENUE_EXPENDITURE_DETAIL+" ("+
+    private String Create_table_RevenueExpenditureDetail = "CREATE TABLE "+TABLE_REVENUE_EXPENDITURE_DETAIL+" ("+
             REVENUE_EXPENDITURE_ID +" integer primary key, "+
             FORM_ID +" integer, "+
             CATEGORY_ID +" integer, "+
@@ -64,25 +66,91 @@ public class DBManager extends SQLiteOpenHelper {
             REVENUE_EXPENDITURE_MONEY +" REAL, "+
             REVENUE_EXPENDITURE_NOTE +" TEXT, " +
             REVENUE_EXPENDITURE_PERIODIC +" integer, " +
+            REVENUE_EXPENDITURE_DATE +" DATE, " +
             "FOREIGN KEY ( "+FORM_ID+") REFERENCES "+TABLE_FORM+"("+FORM_ID+"), " +
             "FOREIGN KEY ( "+CATEGORY_ID+") REFERENCES "+TABLE_CATEGORY+"("+CATEGORY_ID+"), " +
             "FOREIGN KEY ( "+ACCOUNT_ID+") REFERENCES "+TABLE_ACCOUNT+"("+ACCOUNT_ID+"))";
 
     public DBManager(@Nullable Context context) {
         super(context, DATEBASE_NAME, null, VERSION);
+        this.context = context;
+        initData();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Create_table_form);
         db.execSQL(Create_table_category);
-        db.execSQL(Create_table_account_querry);
-        db.execSQL(Create_table_RevenueExpenditureDetail_querry);
+        db.execSQL(Create_table_account);
+        db.execSQL(Create_table_RevenueExpenditureDetail);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    // Add first data
+    public void initData(){
+        // Add account data
+        boolean exist = false;
+        List<Account> accountList = getAllAccount();
+        for(Account acc: accountList){
+            if(acc.getmAccountName().equals("Tiền mặt")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addAccount(new Account("Tiền mặt", 0));
+            addAccount(new Account("Tài khoản ngân hàng", 0));
+            addAccount(new Account("Thẻ tín dụng", 0));
+        }
+
+
+        // Add form data
+        exist = false;
+        List<Form> formList = getAllForm();
+        for(Form form: formList){
+            if(form.getmFormName().equals("Thu")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addForm(new Form("Thu"));
+            addForm(new Form("Chi"));
+        }
+
+
+        // Add category data
+        exist = false;
+        List<Category> categoryList = getAllCategory();
+        for(Category category: categoryList){
+            if(category.getmCategoryName().equals("Trả thêm giờ")){
+                exist = true;
+                break;
+            }
+        }
+        if(!exist){
+            addCategory(new Category(1, "Trả thêm giờ"));
+            addCategory(new Category(1, "Tiền lương"));
+            addCategory(new Category(1, "Tiền cấp"));
+            addCategory(new Category(1, "Tiền thưởng"));
+            addCategory(new Category(1, "Khác"));
+
+            addCategory(new Category(2, "Ăn uống"));
+            addCategory(new Category(2, "Sức khỏe"));
+            addCategory(new Category(2, "Giải trí"));
+            addCategory(new Category(2, "Sinh hoạt"));
+            addCategory(new Category(2, "Áo quần"));
+            addCategory(new Category(2, "Làm đẹp"));
+            addCategory(new Category(2, "Giáo dục"));
+            addCategory(new Category(2, "Sự kiện"));
+            addCategory(new Category(2, "Đi chợ"));
+            addCategory(new Category(2, "Khác"));
+        }
     }
 
     public void addForm(Form form){
@@ -125,6 +193,7 @@ public class DBManager extends SQLiteOpenHelper {
         values.put(REVENUE_EXPENDITURE_MONEY,revenueExpenditureDetail.getmMoney());
         values.put(REVENUE_EXPENDITURE_NOTE,revenueExpenditureDetail.getmNote());
         values.put(REVENUE_EXPENDITURE_PERIODIC,revenueExpenditureDetail.getmPeriodic());
+        values.put(REVENUE_EXPENDITURE_DATE,revenueExpenditureDetail.getmDate());
         db.insert(TABLE_REVENUE_EXPENDITURE_DETAIL,null,values);
         db.close();
     }
@@ -168,6 +237,46 @@ public class DBManager extends SQLiteOpenHelper {
         return listCategory;
     }
 
+    public List<Category> getExpenditureCategories(){
+        List<Category> expenditureCategories = new ArrayList<>();
+        String selectQuery = "SELECT * FROM "+ TABLE_CATEGORY + " WHERE " + FORM_ID + "=2";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst())
+        {
+            do {
+                Category category = new Category();
+                category.setmCategoryID(cursor.getInt(0));
+                category.setmFormID(cursor.getInt(1));
+                category.setmCategoryName(cursor.getString(2));
+                expenditureCategories.add(category);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return expenditureCategories;
+    }
+
+    public List<Category> getRevenueCategories(){
+        List<Category> revenueCategories = new ArrayList<>();
+        String selectQuery = "SELECT * FROM "+ TABLE_CATEGORY + " WHERE " + FORM_ID + "=1";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        if (cursor.moveToFirst())
+        {
+            do {
+                Category category = new Category();
+                category.setmCategoryID(cursor.getInt(0));
+                category.setmFormID(cursor.getInt(1));
+                category.setmCategoryName(cursor.getString(2));
+                revenueCategories.add(category);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return revenueCategories;
+    }
+
     public List<Account> getAllAccount(){
         List<Account> accountList = new ArrayList<Account>();
 
@@ -193,9 +302,9 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     public List<RevenueExpenditureDetail> getAllRevenueExpenditureDetail(){
-        List<RevenueExpenditureDetail> revenueExpenditureDetailList = new ArrayList<RevenueExpenditureDetail>();
+        List<RevenueExpenditureDetail> revenueExpenditureDetailList = new ArrayList<>();
 
-        String query = "SELECT * FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL;
+        String query = "SELECT * FROM " + TABLE_REVENUE_EXPENDITURE_DETAIL + " ORDER BY " + REVENUE_EXPENDITURE_DATE + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -211,6 +320,7 @@ public class DBManager extends SQLiteOpenHelper {
                 revenueExpenditureDetail.setmMoney(cursor.getFloat(4));
                 revenueExpenditureDetail.setmNote(cursor.getString(5));
                 revenueExpenditureDetail.setmPeriodic(cursor.getInt(6));
+                revenueExpenditureDetail.setmDate(cursor.getString(7));
 
                 revenueExpenditureDetailList.add(revenueExpenditureDetail);
 
@@ -279,7 +389,8 @@ public class DBManager extends SQLiteOpenHelper {
                 cursor.getInt(3),
                 cursor.getFloat(4),
                 cursor.getString(5),
-                cursor.getInt(6)
+                cursor.getInt(6),
+                cursor.getString(7)
         );
         cursor.close();
         db.close();
@@ -320,6 +431,7 @@ public class DBManager extends SQLiteOpenHelper {
         values.put(REVENUE_EXPENDITURE_MONEY, revenueExpenditureDetail.getmMoney());
         values.put(REVENUE_EXPENDITURE_NOTE, revenueExpenditureDetail.getmNote());
         values.put(REVENUE_EXPENDITURE_PERIODIC, revenueExpenditureDetail.getmPeriodic());
+        values.put(REVENUE_EXPENDITURE_DATE, revenueExpenditureDetail.getmDate());
 
         return db.update(TABLE_REVENUE_EXPENDITURE_DETAIL,values, REVENUE_EXPENDITURE_ID + " =?", new String[]{String.valueOf(revenueExpenditureDetail.getmRevenueExpenditureID())});
     }
@@ -334,14 +446,14 @@ public class DBManager extends SQLiteOpenHelper {
         return db.delete(TABLE_CATEGORY,CATEGORY_ID+"=?",new String[]{String.valueOf(id)});
     }
 
-    public int deleteAccount(Account account){
+    public int deleteAccount(int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_ACCOUNT,ACCOUNT_ID+" =?", new String[]{String.valueOf(account.getmAccountID())});
+        return db.delete(TABLE_ACCOUNT,ACCOUNT_ID+" =?", new String[]{String.valueOf(id)});
     }
 
-    public int deleteRevenueExpenditureDetail(RevenueExpenditureDetail revenueExpenditureDetail){
+    public int deleteRevenueExpenditureDetail(int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_REVENUE_EXPENDITURE_DETAIL,REVENUE_EXPENDITURE_ID+" =?", new String[]{String.valueOf(revenueExpenditureDetail.getmRevenueExpenditureID())});
+        return db.delete(TABLE_REVENUE_EXPENDITURE_DETAIL,REVENUE_EXPENDITURE_ID+" =?", new String[]{String.valueOf(id)});
     }
 
 }
