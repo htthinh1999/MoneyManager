@@ -265,6 +265,9 @@ public class BarChartFragment extends Fragment {
     }
 
     public void setupPieChart(){
+        pieChart_Evenue.setDrawEntryLabels(false);
+        pieChart_Expenditure.setDrawEntryLabels(false);
+
         pieDataSet_Evenue.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet_Evenue.notifyDataSetChanged();
         pieData_Evenue = new PieData(pieDataSet_Evenue);
@@ -273,8 +276,8 @@ public class BarChartFragment extends Fragment {
 
         pieChart_Evenue.getDescription().setEnabled(false);
         pieChart_Evenue.setCenterText("Thu");
-        pieChart_Evenue.setEntryLabelColor(Color.BLACK);
-        pieChart_Evenue.setEntryLabelTextSize(10);
+        pieChart_Evenue.getData().setValueTextColor(Color.WHITE);
+        pieChart_Evenue.getData().setValueTextSize(15);
         pieChart_Evenue.animate();
         pieChart_Evenue.notifyDataSetChanged();
         pieChart_Evenue.invalidate();
@@ -287,8 +290,8 @@ public class BarChartFragment extends Fragment {
 
         pieChart_Expenditure.getDescription().setEnabled(false);
         pieChart_Expenditure.setCenterText("Chi");
-        pieChart_Expenditure.setEntryLabelColor(Color.BLACK);
-        pieChart_Expenditure.setEntryLabelTextSize(12);
+        pieChart_Expenditure.getData().setValueTextColor(Color.WHITE);
+        pieChart_Expenditure.getData().setValueTextSize(15);
         pieChart_Expenditure.animate();
         pieChart_Expenditure.notifyDataSetChanged();
         pieChart_Expenditure.invalidate();

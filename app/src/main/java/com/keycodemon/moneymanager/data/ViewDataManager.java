@@ -216,178 +216,275 @@ public class ViewDataManager extends DBManager {
     }
 
     public ArrayList<PieEntry> GetEvenuePieChartByMonth(int Pmonth, int Pyear){
+        Long topSum = 0l;
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-        CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+        CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + String.format("%02d", Pmonth) + "/" + Pyear +"'" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                    String date = cursor.getString(0);
-                    int month = Integer.parseInt(date.substring(3, 5));
-                    int year = Integer.parseInt(date.substring(6, 10));
-                    if(month == Pmonth && year == Pyear){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum += money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
+            }while (cursor.moveToNext());
+        }
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + String.format("%02d", Pmonth) + "/" + Pyear +"'";
+
+        Long totalMoney = 1l;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                if(totalMoney - topSum != 0){
+                    pieEntryArrayList.add(new PieEntry(totalMoney - topSum, "Còn lại"));
                 }
             }while (cursor.moveToNext());
         }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+
+        db.close();
+
         return pieEntryArrayList;
     }
 
     public ArrayList<PieEntry> GetExpenditurePieChartByMonth(int Pmonth, int Pyear){
+        Long topSum = 0L;
+
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + String.format("%02d", Pmonth) + "/" + Pyear +"'" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                String date = cursor.getString(0);
-                int month = Integer.parseInt(date.substring(3, 5));
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(month == Pmonth && year == Pyear){
-                    Long money = cursor.getLong(1);
-                    String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
-                }
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum+=money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
             }while (cursor.moveToNext());
         }
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + String.format("%02d", Pmonth) + "/" + Pyear +"'";
+
+        Long totalMoney = 1L;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                if(totalMoney - topSum != 0){
+                    pieEntryArrayList.add(new PieEntry(totalMoney - topSum, "Còn lại"));
+                }
+
+            }while (cursor.moveToNext());
+        }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+
         return pieEntryArrayList;
     }
 
     public ArrayList<PieEntry> GetEvenuePieChartByQuarter(int Pquarter,int Pyear){
+        Long topSum = 0L;
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2)))" +
+                " IN ('"+String.format("%02d", Pquarter*3)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-1)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-2)+"/"+Pyear +"')" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                String date = cursor.getString(0);
-                int month = Integer.parseInt(date.substring(3, 5));
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(Pquarter == 1){
-                    if((month == 1 && year == Pyear) || (month == 2 && year == Pyear) || (month == 3 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 2){
-                    if((month == 4 && year == Pyear) || (month == 5 && year == Pyear) || (month == 6 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 3){
-                    if((month == 7 && year == Pyear) || (month == 8 && year == Pyear) || (month == 9 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 4){
-                    if((month == 10 && year == Pyear) || (month == 11 && year == Pyear) || (month == 12 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum += money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
             }while (cursor.moveToNext());
         }
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2)))" +
+                " IN ('"+String.format("%02d", Pquarter*3)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-1)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-2)+"/"+Pyear +"')";
+
+        Long totalMoney = 1l;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                if(totalMoney - topSum != 0){
+                    pieEntryArrayList.add(new PieEntry(totalMoney - topSum, "Còn lại"));
+                }
+
+            }while (cursor.moveToNext());
+        }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+        db.close();
+
         return pieEntryArrayList;
     }
 
     public ArrayList<PieEntry> GetExpenditurePieChartByQuarter(int Pquarter,int Pyear){
+        Long topSum = 0l;
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2)))" +
+                " IN ('"+String.format("%02d", Pquarter*3)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-1)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-2)+"/"+Pyear +"')" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                String date = cursor.getString(0);
-                int month = Integer.parseInt(date.substring(3, 5));
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(Pquarter == 1){
-                    if((month == 1 && year == Pyear) || (month == 2 && year == Pyear) || (month == 3 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 2){
-                    if((month == 4 && year == Pyear) || (month == 5 && year == Pyear) || (month == 6 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 3){
-                    if((month == 7 && year == Pyear) || (month == 8 && year == Pyear) || (month == 9 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
-                }
-                if(Pquarter == 4){
-                    if((month == 10 && year == Pyear) || (month == 11 && year == Pyear) || (month == 12 && year == Pyear)){
-                        Long money = cursor.getLong(1);
-                        String category = cursor.getString(2);
-                        pieEntryArrayList.add(new PieEntry(money,category));
-                    }
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum += money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
+            }while (cursor.moveToNext());
+        }
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%m/%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2)))" +
+                " IN ('"+String.format("%02d", Pquarter*3)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-1)+"/"+Pyear +"','"+String.format("%02d", Pquarter*3-2)+"/"+Pyear +"')";
+
+        Long totalMoney = 1l;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                if(totalMoney - topSum != 0){
+                    pieEntryArrayList.add(new PieEntry(totalMoney - topSum, "Còn lại"));
                 }
             }while (cursor.moveToNext());
         }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+        db.close();
+
         return pieEntryArrayList;
     }
 
     public ArrayList<PieEntry> GetEvenuePieChartByYear(int Pyear){
+        Long topSum = 0l;
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + Pyear+"'" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                String date = cursor.getString(0);
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(year == Pyear){
-                    Long money = cursor.getLong(1);
-                    String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
-                }
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum += money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
             }while (cursor.moveToNext());
         }
+
+
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 1 AND strftime('%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + Pyear+"'";
+
+        Long totalMoney = 1l;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                pieEntryArrayList.add(new PieEntry(totalMoney-topSum, "Còn lại"));
+            }while (cursor.moveToNext());
+        }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+        db.close();
+
         return pieEntryArrayList;
     }
 
     public ArrayList<PieEntry> GetExpenditurePieChartByYear(int Pyear){
+        Long topSum = 0l;
         ArrayList<PieEntry> pieEntryArrayList = new ArrayList<>();
-        String query = "SELECT "+REVENUE_EXPENDITURE_DATE+","+REVENUE_EXPENDITURE_MONEY+", "+CATEGORY_NAME+"" +
-                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
-                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+" WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2" ;
+        String query = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+"), "+CATEGORY_NAME+
+                " FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+ CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID+
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + Pyear+"'" +
+                " GROUP BY " + CATEGORY_NAME +
+                " ORDER BY SUM("+REVENUE_EXPENDITURE_MONEY+") DESC LIMIT 4";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst()){
             do{
-                String date = cursor.getString(0);
-                int year = Integer.parseInt(date.substring(6, 10));
-                if(year == Pyear){
-                    Long money = cursor.getLong(1);
-                    String category = cursor.getString(2);
-                    pieEntryArrayList.add(new PieEntry(money,category));
-                }
+                Long money = cursor.getLong(0);
+                String category = cursor.getString(1);
+                topSum+=money;
+
+                pieEntryArrayList.add(new PieEntry(money, category));
             }while (cursor.moveToNext());
         }
+
+
+        String querySumAll = "SELECT SUM("+REVENUE_EXPENDITURE_MONEY+")"+
+                "  FROM "+TABLE_REVENUE_EXPENDITURE_DETAIL+" INNER JOIN "+TABLE_CATEGORY+" ON "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+
+                CATEGORY_ID+" = "+TABLE_CATEGORY+"."+CATEGORY_ID +
+                " WHERE "+TABLE_REVENUE_EXPENDITURE_DETAIL+"."+FORM_ID+" = 2 AND strftime('%Y', datetime(substr(" + REVENUE_EXPENDITURE_DATE + ", 7, 4) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 4, 2) || '-' || substr(" + REVENUE_EXPENDITURE_DATE + ", 1, 2))) = '" + Pyear+"'";
+
+        Long totalMoney = 1l;
+        cursor = db.rawQuery(querySumAll, null);
+        if(cursor.moveToFirst()){
+            do{
+                totalMoney = cursor.getLong(0);
+                if(totalMoney - topSum != 0){
+                    pieEntryArrayList.add(new PieEntry(totalMoney - topSum, "Còn lại"));
+                }
+
+            }while (cursor.moveToNext());
+        }
+
+        for (PieEntry pieEntry: pieEntryArrayList) {
+            pieEntry.setY(pieEntry.getValue()/totalMoney*100);
+        }
+        db.close();
+
         return pieEntryArrayList;
     }
 
