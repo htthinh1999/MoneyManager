@@ -41,6 +41,18 @@ public class ExpandableGetData {
         return dayDataList;
     }
 
+    public List<DayData> getDataOfMonth(String monthOfYear){
+
+        dayDataList = viewDataManager.getAllDayDataOfMonth(monthOfYear);
+
+        for(DayData dayData: dayDataList){
+            List<ItemDetailData> itemDetailDataList = viewDataManager.getItemDetailDateListByDate(dayData.getDate());
+            dayData.setItemDetailDataList(itemDetailDataList);
+        }
+
+        return dayDataList;
+    }
+
     public void detailListViewItem(ExpandableListView expandableListView, final CustomExpandableListAdapter customExpandableListAdapter, final FragmentActivity context){
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override

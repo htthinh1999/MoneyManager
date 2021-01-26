@@ -3,52 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".ItemDetailActivity"
     android:padding="15dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    tools:context=".SavingDepositActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Khoản thu chi"
+        android:text="Khoản gửi tiết kiệm"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textStyle="bold"
-        android:textSize="35sp"
+        android:textSize="30sp"
         android:textColor="@color/colorPrimary"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="2"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnRevenue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:background="@drawable/btn_no_select"
-            android:textColor="@android:color/darker_gray"
-            android:text="THU"/>
-
-        <Button
-            android:id="@+id/btnExpenditure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:background="@drawable/btn_expenditure"
-            android:textColor="@color/colorExpenditure"
-            android:text="CHI"/>
-
-    </LinearLayout>
+        android:layout_marginBottom="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,15 +27,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="6"
+            android:layout_weight="5.5"
             android:text="Ngày"/>
 
         <EditText
             android:id="@+id/etDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
             android:inputType="date"
             />
 
@@ -82,61 +50,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Tài khoản"/>
-
-        <EditText
-            android:id="@+id/etAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Thể loại"/>
-
-        <EditText
-            android:id="@+id/etCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="8">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:text="Số tiền"/>
+            android:layout_weight="5.5"
+            android:text="Số tiền gửi"/>
 
         <EditText
             android:id="@+id/etMoney"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="numberSigned"
-            android:text="0"/>
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:inputType="numberSigned"/>
 
     </LinearLayout>
 
@@ -149,18 +72,105 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="6"
+            android:layout_weight="5.5"
+            android:text="Lãi suất (%/năm)"/>
+
+        <EditText
+            android:id="@+id/etInterestRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:inputType="numberDecimal"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5.5"
+            android:text="Kỳ hạn gửi"/>
+
+        <EditText
+            android:id="@+id/etSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:text="6 tháng"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5.5"
+            android:text="Tài khoản nguồn"/>
+
+        <EditText
+            android:id="@+id/etSourceAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:inputType="text"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5.5"
+            android:text="Tài khoản đích"/>
+
+        <EditText
+            android:id="@+id/etDestinationAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:inputType="text"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5.5"
             android:text="Tên"/>
 
-        <AutoCompleteTextView
+        <EditText
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorExpenditure"
-            android:layout_weight="2"
-            android:inputType="text"
-            android:completionThreshold="1"
-            />
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="2.5"
+            android:inputType="text"/>
 
     </LinearLayout>
 
@@ -177,7 +187,7 @@
             android:layout_weight="1"
             android:layout_margin="5dp"
             android:textColor="@android:color/white"
-            android:background="@drawable/btn_fill_expenditure"
+            android:background="@drawable/btn_fill_primary"
             android:text="Lưu"/>
 
         <Button
