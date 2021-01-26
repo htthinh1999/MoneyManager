@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ViewDataManager extends DBManager{
+public class ViewDataManager extends DBManager {
 
     private Context context;
     private static final String TABLE_FORM = "HINHTHUC";
