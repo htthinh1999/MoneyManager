@@ -26,6 +26,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    ListMonthFragment listMonthFragment;
+    BarChartFragment barChartFragment;
+    AccountListFragment accountListFragment;
+
     View fabBGLayout;
     FloatingActionButton fabMenu, fabRevenueExpenditure, fabSavingDeposit, fabAccount, fabCategory;
     BottomNavigationView bottomNavigationView;
@@ -44,8 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListDateFragment()).commit();
-
+        listMonthFragment.updateData();
     }
 
     public void init(){
@@ -68,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabAccount.setOnClickListener(this);
         fabCategory.setOnClickListener(this);
 
+        listMonthFragment = new ListMonthFragment();
+        barChartFragment = new BarChartFragment();
+        accountListFragment = new AccountListFragment();
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -76,13 +83,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 switch (item.getItemId()){
                     case R.id.action_date:
-                        fragment = new ListDateFragment();
+                        listMonthFragment.updateData();
+                        fragment = listMonthFragment;
                         break;
                     case R.id.action_report:
-                        fragment = new BarChartFragment();
+                        fragment = barChartFragment;
                         break;
                     case R.id.action_account:
-                        fragment = new AccountListFragment();
+                        fragment = accountListFragment;
                         break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ListDateFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, listMonthFragment).commit();
     }
 
     private void openFabMenu(){
