@@ -6,7 +6,7 @@
         android:id="@+id/action_date"
         android:orderInCategory="100"
         android:title="@string/action_revenue_expenditure"
-        android:icon="@drawable/btn_fill_primary"
+        android:icon="@drawable/icon_triangle"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_report"
@@ -18,6 +18,6 @@
         android:id="@+id/action_account"
         android:orderInCategory="100"
         android:title="@string/action_account"
-        android:icon="@drawable/btn_fill_primary"
+        android:icon="@drawable/icon_square"
         app:showAsAction="never" />
 </menu>
